@@ -10,7 +10,7 @@ package shared_definitions_pkg;
 
     //instruction functions
     typedef enum {
-    ADD, ADDU, MUL, MULT, DIV,          //Arithmetic
+    ADD, ADDU, MULT, DIV,               //Arithmetic
     AND, OR, XOR, NOR,                  //Logical
     SLL, SRL, SRA,                      //Shifts
     LB, LBU, LH, LHU, LW,               //Mem Load
