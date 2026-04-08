@@ -1,6 +1,6 @@
 **This is the final lab (LAB 8) for CMPE 140 - Computer Architecture and Design at SJSU**
 
-*To build, open the folder you want the project to be in and use the Vivado tcl console to run the build script (vivado --)
+*To use, simply open the xpr file using Vivado.*
 
 The purpose of this lab is to implement a full-pipeline MIPS processor with a built in factorial accelerator. A full list of goals/milestones is:  
     <blockquote><details><summary>[ ] five stage pipeline</summary><blockquote>
