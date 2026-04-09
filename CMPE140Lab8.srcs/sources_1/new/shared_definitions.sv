@@ -22,5 +22,5 @@ package shared_definitions_pkg;
     } instruction_function_e;
 
     //multdiv functions
-    typedef enum {divmul_MULT, divmul_DIV} divmul_function_e;
+    typedef enum {DIVMUL_MULT, DIVMUL_DIV} divmul_function_e;
 endpackage
