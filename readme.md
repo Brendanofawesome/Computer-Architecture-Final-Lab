@@ -1,6 +1,6 @@
 **This is the final lab (LAB 8) for CMPE 140 - Computer Architecture and Design at SJSU**
 
-*To use, simply open the xpr file using Vivado.*
+*To build, open the folder you want the project to be in and use the Vivado tcl console to run the build script (vivado --)
 
 The purpose of this lab is to implement a full-pipeline MIPS processor with a built in factorial accelerator. A full list of goals/milestones is:  
     <blockquote><details><summary>[ ] five stage pipeline</summary><blockquote>
@@ -9,11 +9,18 @@ The purpose of this lab is to implement a full-pipeline MIPS processor with a bu
         [ ] instruction execute stage  
         [ ] memory access stage  
         [ ] register writeback stage</blockquote></details>  
+    <details><summary>[ ] processor core features</summary><blockquote>
+        [ ] instruction decoder  
+        [ ] ALU unit  
+        [ ] multiplier/divider (optional)  
+        [ ] registerfile  
+        [ ] memory controller  
+        [ ] PC datapath  </blockquote></details>  
     <details><summary>[ ] hazard control unit</summary><blockquote>
         [ ] Data read after write hazards from registers  
         [ ] Data use after read hazards from memory  
         [ ] Branching hazards  </blockquote></details>  
-    <details><summary>[ ] memory-mapped peripheral subsystem (word addressable)</summary><blockquote>
+    <details><summary>[ ] memory-mapped peripheral subsystem (word oriented)</summary><blockquote>
         [ ] address decoder to control peripheral write and read  
         [ ] 0x00000-0x000FC => data memory address range  
         [ ] 0x80000-0x8000C => factorial accelerator address range  
