@@ -8,6 +8,13 @@ package shared_definitions_pkg;
     //instruction format codes
     typedef enum {FORMAT_INSTR_I, FORMAT_INSTR_J, FORMAT_INSTR_R} instruction_format_e;
 
+    //ALU opcodes
+    typedef enum {
+        ALU_SLL, ALU_SRL, ALU_SRA,                  //shifts
+        ALU_ADD, ALU_ADDU, ALU_SUB, ALU_SUBU,       //arithmetics
+        ALU_AND, ALU_OR, ALU_XOR, ALU_NOR, ALU_LU   //logic
+    } alu_opcodes_e;
+  
     //instruction functions
     typedef enum {
     ADD, ADDU, MULT, DIV,               //Arithmetic
