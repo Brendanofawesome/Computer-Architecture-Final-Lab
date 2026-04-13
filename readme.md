@@ -9,11 +9,18 @@ The purpose of this lab is to implement a full-pipeline MIPS processor with a bu
         [ ] instruction execute stage  
         [ ] memory access stage  
         [ ] register writeback stage</blockquote></details>  
+    <details><summary>[ ] processor core features</summary><blockquote>
+        [x] instruction decoder  
+        [ ] ALU unit  
+        [ ] multiplier/divider (optional)  
+        [ ] registerfile  
+        [ ] memory controller  
+        [ ] PC datapath  </blockquote></details>  
     <details><summary>[ ] hazard control unit</summary><blockquote>
         [ ] Data read after write hazards from registers  
         [ ] Data use after read hazards from memory  
         [ ] Branching hazards  </blockquote></details>  
-    <details><summary>[ ] memory-mapped peripheral subsystem (word addressable)</summary><blockquote>
+    <details><summary>[ ] memory-mapped peripheral subsystem (word oriented)</summary><blockquote>
         [ ] address decoder to control peripheral write and read  
         [ ] 0x00000-0x000FC => data memory address range  
         [ ] 0x80000-0x8000C => factorial accelerator address range  
