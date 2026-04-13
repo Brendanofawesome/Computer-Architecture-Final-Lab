@@ -26,10 +26,6 @@ module ALU(
             ALU_SLL:    data_o = data2_i << shamt_i;
             ALU_SRL:    data_o = data2_i >> shamt_i;
             ALU_SRA:    data_o = data1_i >>> shamt_i;
-            ALU_MULT:   {data_hi_o, data_o} = $signed(data1_i) * $signed(data2_i);
-            ALU_MULTU:  {data_hi_o, data_o} = data1_i * data2_i;
-            ALU_DIV:    {data_hi_o, data_o} = {$signed(data1_i) % $signed(data2_i), $signed(data1_i) / $signed(data2_i)};
-            ALU_DIVU:   {data_hi_o, data_o} = {data1_i % data2_i, data1_i / data2_i};
             ALU_ADD:    data_o = data1_i + data2_i;
             ALU_ADDU:   data_o = data1_i + data2_i;
             ALU_SUB:    data_o = $signed(data1_i) - $signed(data2_i);
