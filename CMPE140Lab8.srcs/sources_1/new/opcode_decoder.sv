@@ -2,8 +2,7 @@
 
 //this module is entirely combinatorial
 
-import shared_definitions_pkg::instruction_format_e; //import instruction types
-import shared_definitions_pkg::instruction_function_e; //import instruction functions
+import shared_definitions_pkg::*; //import instruction types and functions
 
 typedef enum {
     //supported opcodes
@@ -80,7 +79,6 @@ module opcode_decoder(
     /////////////////////
     // SPLIT BITFIELDS //
     /////////////////////
-
         //assign register field outputs
         assign rs_o = instr_i[25:21];
         assign rt_o = instr_i[20:16];
@@ -99,7 +97,6 @@ module opcode_decoder(
     //////////////////////////////////
     // DETERMINE INSTRUCTION FORMAT //
     //////////////////////////////////
-
         always_comb begin : ID_FMT
             unique case(instr_i)
                 32'h0:          format_o = FORMAT_INSTR_R;
@@ -111,7 +108,6 @@ module opcode_decoder(
     ////////////////////////////////////
     // DETERMINE INSTRUCTION FUNCTION //
     ////////////////////////////////////
-
         always_comb begin : ID_FNC
 
             if(format_o == FORMAT_INSTR_R) begin
