@@ -27,4 +27,7 @@ package shared_definitions_pkg;
     SLT, SLTI,                          //Comparison
     J, JR, JAL                          //Jump
     } instruction_function_e;
+
+    //multdiv functions
+    typedef enum {DIVMUL_MULT, DIVMUL_DIV} divmul_function_e;
 endpackage
