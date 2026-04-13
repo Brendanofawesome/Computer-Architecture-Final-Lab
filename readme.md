@@ -10,7 +10,7 @@ The purpose of this lab is to implement a full-pipeline MIPS processor with a bu
         [ ] memory access stage  
         [ ] register writeback stage</blockquote></details>  
     <details><summary>[ ] processor core features</summary><blockquote>
-        [ ] instruction decoder  
+        [x] instruction decoder  
         [ ] ALU unit  
         [ ] multiplier/divider (optional)  
         [ ] registerfile  
