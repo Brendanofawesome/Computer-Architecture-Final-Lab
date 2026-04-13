@@ -6,7 +6,25 @@ package shared_definitions_pkg;
     ////////////////
 
     //instruction format codes
-    typedef enum {INSTR_I_FORMAT, INSTR_J_FORMAT, INSTR_R_FORMAT} instruction_format_e;
+    typedef enum {FORMAT_INSTR_I, FORMAT_INSTR_J, FORMAT_INSTR_R} instruction_format_e;
 
-    
+    //ALU opcodes
+    typedef enum {
+        ALU_SLL, ALU_SRL, ALU_SRA,                  //shifts
+        ALU_ADD, ALU_ADDU, ALU_SUB, ALU_SUBU,       //arithmetics
+        ALU_AND, ALU_OR, ALU_XOR, ALU_NOR, ALU_LU   //logic
+    } alu_opcodes_e;
+  
+    //instruction functions
+    typedef enum {
+    ADD, ADDU, MULT, DIV,               //Arithmetic
+    AND, OR, XOR, NOR,                  //Logical
+    SLL, SRL, SRA,                      //Shifts
+    LB, LBU, LH, LHU, LW,               //Mem Load
+    SB, SH, SW,                         //Mem Store
+    LUI, MFHI, MFLO, MTHI, MTLO,        //Transfer
+    BEQ, BNE,                           //Branch
+    SLT, SLTI,                          //Comparison
+    J, JR, JAL                          //Jump
+    } instruction_function_e;
 endpackage
