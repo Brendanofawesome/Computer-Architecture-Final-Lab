@@ -32,9 +32,9 @@ module membus_interconnect_top(
 
     // RAM
     memory_bus_if RAM_bus();
-    logic[7:2] RAM_address;
+    logic[RAM_ADDRESS_SIZE-1:2] RAM_address;
 
-    ram_interface mapped_RAM(
+    ram_interface #(.WIDTH(RAM_ADDRESS_SIZE)) mapped_RAM (
         .clk(clk),
         .rst_n(rst_n),
 
