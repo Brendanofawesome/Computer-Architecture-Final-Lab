@@ -4,22 +4,22 @@
 
 module next_pc_gen(
     //unconditional absolute jump to immediate
-    input logic [25:0] imm_addr_i,
-    input logic id_jump_i,
+    input logic [25:0] imm_addr_i, //address to jump to
+    input logic id_jump_i, //1 == j-type instruction, 0 == not j-type instruction
 
     //ex stage jump trigger
     input logic ex_j_type_i, //1 == offset type, 0 == register type
-    input logic ex_jump_i,
+    input logic ex_jump_i, //1 == jump instruction in ex stage, 0 == no jump instruction in ex stage
 
     //conditional jump to offset address
-    input logic [31:2] bta_i,
+    input logic [31:2] bta_i, //branch target address, calculated in ex stage and forwarded to this module
 
     //jump to absolute register address
-    input logic [31:0] ra_i,
+    input logic [31:0] ra_i, //register address to jump to, calculated in ex stage and forwarded to this module
 
     //PC
-    input logic [31:0] PC_i,
-    output logic [31:0] nPC_o
+    input logic [31:0] PC_i, //current PC, used for calculating PC+4 and J-type address
+    output logic [31:0] nPC_o //next PC, selected from one of the above sources
     );
 
     /////////////////////
