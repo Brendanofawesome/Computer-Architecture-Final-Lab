@@ -1,11 +1,12 @@
 module mips_fpga (
         input  wire         clk,
-        input  wire         rst,
-        inout  wire [15:0]  switches,
-        inout wire  [2:0]   buttons,
-        inout wire  [15:0]  LED,
-        inout wire  [3:0]   LEDSEL,
-        inout wire  [7:0]   LEDOUT
+        input  wire         clk_b,
+        input  wire         rst_b,
+        tri          [15:0] switches,
+        tri          [2:0]  buttons,
+        tri          [15:0] LED,
+        output wire  [3:0]  LEDSEL,
+        output wire  [7:0]  LEDOUT
     );
 
     //clk generatoin
@@ -14,7 +15,7 @@ module mips_fpga (
 
     clk_gen clk_gen (
         .clk100MHz          (clk),
-        .rst                (rst),
+        .rst                (rst_b),
         .clk_sec            (clk_sec),
         .clk_5KHz           (clk_5KHz)
     );
@@ -23,7 +24,7 @@ module mips_fpga (
     wire clk_db;
     button_debouncer clk_db (
             .clk                (clk_5KHz),
-            .button             (clk),
+            .button             (clk_b),
             .debounced_button   (clk_db)
         );
 
@@ -31,23 +32,33 @@ module mips_fpga (
     wire rst_db;
     button_debouncer rst_db (
             .clk                (clk_5KHz),
-            .button             (rst),
+            .button             (rst_b),
             .debounced_button   (rst_db)
         );
     wire rst_n;
     assign rst_n = !rst_db;
 
     //assign IO1 to control the display
-    inout [31:0] io1;
+    tri [31:0] io1;
+    wire [31:0] io1_output_muxed;
+    wire [31:0] oe1;
+
+    genvar i;
+    generate
+        for(i = 0; i < 32; i = i + 1) begin
+            assign io1_output_muxed[i] = oe1[i] ? io1[i] : 1'b0;
+        end
+    endgenerate
+
     wire [7:0]  digit0;
     wire [7:0]  digit1;
     wire [7:0]  digit2;
     wire [7:0]  digit3;
-    assign {digit3, digit2, digit1, digit0} = io1;
+    assign {digit3, digit2, digit1, digit0} = io1_output_muxed;
 
     led_mux led_mux (
             .clk                (clk_5KHz),
-            .rst                (rst),
+            .rst                (rst_b),
             .LED3               (digit3),
             .LED2               (digit2),
             .LED1               (digit1),
@@ -56,11 +67,6 @@ module mips_fpga (
             .LEDOUT             (LEDOUT)
         );
 
-    //assign IO2 to use the switches and LEDs
-    inout [31:0] io2;
-    assign {LED, switches} = io2;
-
-
     logic [3:0] buttons_debounced;
     button_debouncer bd [3:0] (
             .clk                (clk_5KHz),
@@ -68,11 +74,14 @@ module mips_fpga (
             .debounced_button   (buttons_debounced)
         );
 
+    wire [31:0] oe2;
     MIPS mips_top (
             .clk                (clk_db),
             .rst                (rst_n),
 
             .io1(io1),
-            .io2(io2)
+            .oe1(oe1),
+            .io2({LED, switches}),
+            .oe2(oe2)
         );
 endmodule
