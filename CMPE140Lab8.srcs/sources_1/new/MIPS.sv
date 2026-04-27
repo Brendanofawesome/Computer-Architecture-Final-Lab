@@ -3,8 +3,11 @@
 module MIPS(
     input clk, rst_n,
 
-    inout tri [31:0] io1,
-    inout tri [31:0] io2
+    tri [31:0]      io1,
+    output [31:0]   oe1,
+
+    tri [31:0]      io2,
+    output [31:0]   oe2
     );
 
     ////////////////

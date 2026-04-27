@@ -5,7 +5,8 @@ module io_unit(
     memory_bus_if.Peripheral bus,
     input logic [1:0] address,
 
-    inout tri [31:0] pins
+    tri [31:0] pins,
+    output [31:0] oe
     );
 
     logic [31:0] input_registers;
