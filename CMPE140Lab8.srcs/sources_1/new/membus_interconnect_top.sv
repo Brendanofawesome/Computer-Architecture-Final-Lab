@@ -9,8 +9,17 @@ module membus_interconnect_top(
 
     output logic decode_error,
 
-    inout tri [31:0] io1,
-    inout tri [31:0] io2
+    memory_bus_if ram_bus,
+    output logic [7:2] ram_address,
+
+    memory_bus_if factorial_bus,
+    output logic [3:2] factorial_address,
+
+    memory_bus_if gpio1_bus,
+    output logic [3:2] gpio1_address,
+
+    memory_bus_if gpio2_bus,
+    output logic [3:2] gpio2_address
     );
 
     // address mapping
@@ -29,58 +38,6 @@ module membus_interconnect_top(
     localparam bit [31:0]   GPIO2_START_ADDRESS = 'h90010;
     localparam int          GPIO2_ADDRESS_SIZE = 4;
     localparam bit [31:0]   GPIO2_END_ADDRESS = GPIO2_START_ADDRESS + (1 << GPIO2_ADDRESS_SIZE);
-
-    // RAM
-    memory_bus_if RAM_bus();
-    logic[RAM_ADDRESS_SIZE-1:2] RAM_address;
-
-    ram_interface #(.WIDTH(RAM_ADDRESS_SIZE)) mapped_RAM (
-        .clk(clk),
-        .rst_n(rst_n),
-
-        .bus(RAM_bus),
-        .address(RAM_address)
-    );
-
-    // Factorial Accelerator
-    memory_bus_if factorial_bus();
-    logic[3:2] factorial_address;
-
-    factorial_interface mapped_accelerator(
-        .clk(clk),
-        .rst_n(rst_n),
-
-        .bus(factorial_bus),
-        .address(factorial_address)
-    );
-
-    // GPIO 1
-    memory_bus_if GPIO1_bus();
-    logic[3:2] GPIO1_address;
-
-    io_unit GPIO1(
-        .clk(clk),
-        .rst_n(rst_n),
-
-        .bus(GPIO1_bus),
-        .address(GPIO1_address),
-
-        .pins(io1)
-    );
-
-    // GPIO 2
-    memory_bus_if GPIO2_bus();
-    logic[3:2] GPIO2_address;
-
-    io_unit GPIO2(
-        .clk(clk),
-        .rst_n(rst_n),
-
-        .bus(GPIO2_bus),
-        .address(GPIO2_address),
-
-        .pins(io2)
-    );
 
     //multiplex control signals
     typedef enum {MEMORY, GPIO1, GPIO2, FACTORIAL_ACCELERATOR, NONE} peripherals_e;
@@ -110,27 +67,35 @@ module membus_interconnect_top(
     end
 
     // multiplex write requests
+    logic [31:0] selected_peripheral_base, target_address;
     always_comb begin
+        unique case(current_peripheral)
+            MEMORY: selected_peripheral_base = RAM_START_ADDRESS;
+            FACTORIAL_ACCELERATOR: selected_peripheral_base = FACTORIAL_START_ADDRESS;
+            GPIO1: selected_peripheral_base = GPIO1_START_ADDRESS;
+            GPIO2: selected_peripheral_base = GPIO2_START_ADDRESS;
+        endcase
+        target_address = word_aligned_address - selected_peripheral_base;
+
+        ram_address = target_address[7:2];
         RAM_bus.select = current_peripheral == MEMORY && !decode_error;
         RAM_bus.data_in = input_bus.data_in;
         RAM_bus.write_enable = input_bus.write_enable;
 
+        factorial_address = target_address[3:2];
         factorial_bus.select = current_peripheral == FACTORIAL_ACCELERATOR && !decode_error;
         factorial_bus.data_in = input_bus.data_in;
         factorial_bus.write_enable = input_bus.write_enable;
 
+        gpio1_address = target_address[3:2];
         GPIO1_bus.select = current_peripheral == GPIO1 && !decode_error;
         GPIO1_bus.data_in = input_bus.data_in;
         GPIO1_bus.write_enable = input_bus.write_enable;
 
+        gpio2_address = target_address[3:2];
         GPIO2_bus.select = current_peripheral == GPIO2 && !decode_error;
         GPIO2_bus.data_in = input_bus.data_in;
         GPIO2_bus.write_enable = input_bus.write_enable;
-
-        RAM_address = (word_aligned_address - RAM_START_ADDRESS) >> 2;
-        factorial_address = (word_aligned_address - FACTORIAL_START_ADDRESS) >> 2;
-        GPIO1_address = (word_aligned_address - GPIO1_START_ADDRESS) >> 2;
-        GPIO2_address = (word_aligned_address - GPIO2_START_ADDRESS) >> 2;
     end
 
     // multiplex reads

@@ -35,21 +35,21 @@ module io_unit(
             gpio_direction <= '0;
         end
         else if(bus.select) begin //peripheral is selected
-            case(reg_index)
+            case(address)
                 //reg 0 is GPIO_DIRECTION
-                (0):    begin
+                (2'd0):    begin
                     if(bus.write_enable) gpio_direction <= bus.data_in;
                     bus.data_out <= gpio_direction;
                 end
 
                 //reg 1 is GPIO_OUT
-                (4):    begin
+                (2'd1):    begin
                     if(bus.write_enable) output_registers <= bus.data_in;
                     bus.data_out <= output_registers;
                 end
 
                 //reg 2 is GPIO_IN
-                (8):    begin
+                (2'd2):    begin
                     //read-only
                     bus.data_out <= input_registers;
                 end
