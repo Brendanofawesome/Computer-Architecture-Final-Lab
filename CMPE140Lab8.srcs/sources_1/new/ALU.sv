@@ -14,7 +14,6 @@ module ALU(
 
     //data output
     output logic [31:0] data_o,
-    output logic [31:0] data_hi_o,
     output logic zero_o
     );
 
