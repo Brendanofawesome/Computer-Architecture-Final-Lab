@@ -59,7 +59,7 @@ module memory_controller(
             unique case(data_type_i)
                 2'b00: begin //write byte
                     unique case(address_i[1:0])
-                        2'b00: membus_o.data_in = data_i[7:0];
+                        2'b00: membus_o.data_in = data_i;
                         2'b01: membus_o.data_in = in_shift1;
                         2'b10: membus_o.data_in = in_shift2;
                         2'b11: membus_o.data_in = in_shift3;
@@ -68,7 +68,7 @@ module memory_controller(
 
                 2'b01: begin //write halfword
                     unique case(address_i[1])
-                        1'b0: membus_o.data_in = data_i[15:0];
+                        1'b0: membus_o.data_in = data_i;
                         1'b1: membus_o.data_in = in_shift2;
                     endcase
                 end
@@ -90,17 +90,27 @@ module memory_controller(
             unique case(data_type_i)
                 2'b00: begin //read byte
                     unique case(address_i[1:0])
-                        2'b00: data_o = sign_extend_i ? {{24{membus_o.data_out[7]}}, membus_o.data_out[7:0]} : {24'b0, membus_o.data_out[7:0]};
-                        2'b01: data_o = sign_extend_i ? {{24{membus_o.data_out[15]}}, membus_o.data_out[15:8]} : {24'b0, membus_o.data_out[15:8]};
-                        2'b10: data_o = sign_extend_i ? {{24{membus_o.data_out[23]}}, membus_o.data_out[23:16]} : {24'b0, membus_o.data_out[23:16]};
-                        2'b11: data_o = sign_extend_i ? {{24{membus_o.data_out[31]}}, membus_o.data_out[31:24]} : {24'b0, membus_o.data_out[31:24]};
+                        2'b00: data_o = sign_extend_i   ? {{24{membus_o.data_out[7]}}, membus_o.data_out[7:0]} 
+                                                        : {24'b0, membus_o.data_out[7:0]};
+
+                        2'b01: data_o = sign_extend_i   ? {{24{membus_o.data_out[15]}}, membus_o.data_out[15:8]}
+                                                        : {24'b0, membus_o.data_out[15:8]};
+
+                        2'b10: data_o = sign_extend_i   ? {{24{membus_o.data_out[23]}}, membus_o.data_out[23:16]}
+                                                        : {24'b0, membus_o.data_out[23:16]};
+
+                        2'b11: data_o = sign_extend_i   ? {{24{membus_o.data_out[31]}}, membus_o.data_out[31:24]}
+                                                        : {24'b0, membus_o.data_out[31:24]};
                     endcase
                 end
 
                 2'b01: begin //read halfword
                     unique case(address_i[1])
-                        1'b0: data_o = sign_extend_i ? {{16{membus_o.data_out[15]}}, membus_o.data_out[15:0]} : {16'b0, membus_o.data_out[15:0]};
-                        1'b1: data_o = sign_extend_i ? {{16{membus_o.data_out[31]}}, membus_o.data_out[31:16]} : {16'b0, membus_o.data_out[31:16]};
+                        1'b0: data_o = sign_extend_i    ? {{16{membus_o.data_out[15]}}, membus_o.data_out[15:0]}
+                                                        : {16'b0, membus_o.data_out[15:0]};
+
+                        1'b1: data_o = sign_extend_i    ? {{16{membus_o.data_out[31]}}, membus_o.data_out[31:16]}
+                                                        : {16'b0, membus_o.data_out[31:16]};
                     endcase
                 end
 
