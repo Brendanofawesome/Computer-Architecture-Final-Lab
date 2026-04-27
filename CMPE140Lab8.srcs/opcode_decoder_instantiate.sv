@@ -1,4 +1,4 @@
-// opcode_decoder_instantiate
+// opcode_decoder_instantiate for top level
 
 instruction_function_e  function_w;
 instruction_format_e    format_w;
