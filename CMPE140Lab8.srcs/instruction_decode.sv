@@ -1,4 +1,4 @@
-//implements instruction decode
+//implements instruction_decode step
 import shared_definitions_pkg::*;
 
 module instruction_decode(
