@@ -8,10 +8,12 @@ module GPIO_top (
     memory_bus_if       membus_gpio2,
     input  logic [3:2]  memory_address_gpio2,
 
-    tri         [31:0]  gpio_pins1,
+    output      [31:0]  gpio_outputs1,
+    input       [31:0]  gpio_inputs1,
     output      [31:0]  gpio_oe1,
 
-    tri         [31:0]  gpio_pins2,
+    output      [31:0]  gpio_outputs2,
+    input       [31:0]  gpio_inputs2,
     output      [31:0]  gpio_oe2
 );
 
@@ -20,7 +22,8 @@ module GPIO_top (
         .rst_n   (rst_n),
         .bus     (membus_gpio1.Peripheral),
         .address (memory_address_gpio1),
-        .pins    (gpio_pins1),
+        .output_pins(gpio_outputs1),
+        .input_pins(gpio_inputs1),
         .oe      (gpio_oe1)
     );
 
@@ -29,7 +32,8 @@ module GPIO_top (
         .rst_n   (rst_n),
         .bus     (membus_gpio2.Peripheral),
         .address (memory_address_gpio2),
-        .pins    (gpio_pins2),
+        .output_pins(gpio_outputs2),
+        .input_pins(gpio_inputs2),
         .oe      (gpio_oe2)
     );
 

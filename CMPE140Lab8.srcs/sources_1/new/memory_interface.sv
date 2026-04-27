@@ -1,7 +1,7 @@
 interface memory_bus_if();
     logic        select;
     logic [31:0] data_in;
-    logic        write_enable;
+    logic [3:0]  write_enable; //byte level write_enable
 
     logic [31:0] data_out;
 

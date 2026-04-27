@@ -2,9 +2,9 @@ module mips_fpga (
         input  wire         clk,
         input  wire         clk_b,
         input  wire         rst_b,
-        tri          [15:0] switches,
-        tri          [2:0]  buttons,
-        tri          [15:0] LED,
+        inout        [15:0] switches,
+        inout        [2:0]  buttons,
+        inout        [15:0] LED,
         output wire  [3:0]  LEDSEL,
         output wire  [7:0]  LEDOUT
     );
@@ -22,7 +22,7 @@ module mips_fpga (
 
     //clk debouncing
     wire clk_db;
-    button_debouncer clk_db (
+    button_debouncer clk_db_inst (
             .clk                (clk_5KHz),
             .button             (clk_b),
             .debounced_button   (clk_db)
@@ -30,7 +30,7 @@ module mips_fpga (
 
     //reset signal
     wire rst_db;
-    button_debouncer rst_db (
+    button_debouncer rst_db_inst (
             .clk                (clk_5KHz),
             .button             (rst_b),
             .debounced_button   (rst_db)
@@ -39,14 +39,17 @@ module mips_fpga (
     assign rst_n = !rst_db;
 
     //assign IO1 to control the display
-    tri [31:0] io1;
-    wire [31:0] io1_output_muxed;
+    wire [31:0] io1_output;
+    wire [31:0] io1_input;
     wire [31:0] oe1;
+    assign io1_input = '0;
+
+    wire [31:0] io1_output_muxed;
 
     genvar i;
     generate
-        for(i = 0; i < 32; i = i + 1) begin
-            assign io1_output_muxed[i] = oe1[i] ? io1[i] : 1'b0;
+        for(i = 0; i < 32; i = i + 1) begin : g_7Seg_Signals
+            assign io1_output_muxed[i] = oe1[i] ? io1_output[i] : 1'b0;
         end
     endgenerate
 
@@ -67,6 +70,7 @@ module mips_fpga (
             .LEDOUT             (LEDOUT)
         );
 
+    //debounce the button inputs
     logic [3:0] buttons_debounced;
     button_debouncer bd [3:0] (
             .clk                (clk_5KHz),
@@ -74,14 +78,41 @@ module mips_fpga (
             .debounced_button   (buttons_debounced)
         );
 
+    wire [31:0] io2_output;
+    wire [31:0] io2_input;
     wire [31:0] oe2;
+
+    wire [15:0] led_inputs_unused;
+
+    genvar j;
+    generate
+        for(j = 0; j < 16; j = j + 1) begin : g_io2_buffers
+            io_buffer switch_buffer (
+                .pin            (switches[j]),
+                .gpio_input     (io2_input[j]),
+                .gpio_output    (1'b0), //disallow output
+                .gpio_oe        (1'b0)  //disallow output
+            );
+
+            io_buffer led_buffer (
+                .pin            (LED[j]),
+                .gpio_input     (led_inputs_unused[j]),
+                .gpio_output    (io2_output[16 + j]),
+                .gpio_oe        (oe2[16 + j])
+            );
+        end
+    endgenerate
+
     MIPS mips_top (
             .clk                (clk_db),
             .rst                (rst_n),
 
-            .io1(io1),
-            .oe1(oe1),
-            .io2({LED, switches}),
-            .oe2(oe2)
+            .io1_output         (io1_output),
+            .io1_input          (io1_input),
+            .oe1                (oe1),
+
+            .io2_output         (io2_output),
+            .io2_input          (io2_input),
+            .oe2                (oe2)
         );
 endmodule

@@ -3,10 +3,12 @@
 module MIPS(
     input clk, rst_n,
 
-    tri [31:0]      io1,
+    output [31:0]   io1_output,
+    input  [31:0]   io1_input,
     output [31:0]   oe1,
 
-    tri [31:0]      io2,
+    output [31:0]   io2_output,
+    input  [31:0]   io2_input,
     output [31:0]   oe2
     );
 
@@ -97,8 +99,13 @@ module MIPS(
         .membus_gpio2(membus_gpio2),
         .memory_address_gpio2(memory_address_gpio2),
 
-        .gpio_pins1(io1),
-        .gpio_pin2(io2)
+        .gpio_outputs1(io1_output),
+        .gpio_inputs1(io1_input),
+        .gpio_oe1(oe1),
+
+        .gpio_outputs2(io2_output),
+        .gpio_inputs2(io2_input),
+        .gpio_oe2(oe2)
     );
 
     ram_interface #(.WIDTH(8)) mapped_RAM (

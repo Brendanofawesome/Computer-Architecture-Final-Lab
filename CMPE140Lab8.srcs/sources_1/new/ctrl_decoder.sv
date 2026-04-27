@@ -38,6 +38,7 @@ module ctrl_decoder(
     assign imm_sel_o = format_i == FORMAT_INSTR_I;
     always_comb begin : ALU_OP_SEL
         case(function_i)
+        
         endcase
     end
 

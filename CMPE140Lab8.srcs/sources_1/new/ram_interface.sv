@@ -7,12 +7,15 @@ module ram_interface #(parameter int WIDTH = 8)(
     );
 
     localparam int DEPTH = 1 << (WIDTH - 2);
-    logic [31:0] memory [DEPTH-1];
+    logic [31:0] memory [DEPTH-1] = '{default:0};
 
     //handle writes
     always_ff @(posedge clk) begin
-        if(bus.select && bus.write_enable && rst_n) begin
-            memory[address] <= bus.data_in;
+        if(bus.select && rst_n) begin
+            if(bus.write_enable[0]) memory[address][7:0] <= bus.data_in[7:0];
+            if(bus.write_enable[1]) memory[address][15:8] <= bus.data_in[15:8];
+            if(bus.write_enable[2]) memory[address][23:16] <= bus.data_in[23:16];
+            if(bus.write_enable[3]) memory[address][31:24] <= bus.data_in[31:24];
         end
     end
 
