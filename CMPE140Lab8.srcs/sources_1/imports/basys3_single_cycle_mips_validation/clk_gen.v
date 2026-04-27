@@ -1,7 +1,7 @@
 module clk_gen (
         input  wire clk100MHz,
         input  wire rst,
-        output reg  clk_4sec,
+        output reg  clk_sec,
         output reg  clk_5KHz
     );
 
@@ -12,11 +12,11 @@ module clk_gen (
             count1 = 0;
             count2 = 0;
             clk_5KHz = 0;
-            clk_4sec = 0;
+            clk_sec = 0;
         end
         else begin
-            if (count1 == 200000000) begin
-                clk_4sec = ~clk_4sec;
+            if (count1 == 800000000) begin
+                clk_sec = ~clk_sec;
                 count1 = 0;
             end
 
@@ -26,7 +26,7 @@ module clk_gen (
             end
 
             count1 = count1 + 1;
-            count2 = count2 + 1;            
+            count2 = count2 + 1;
         end
     end
 
