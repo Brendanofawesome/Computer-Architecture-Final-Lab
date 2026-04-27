@@ -1,4 +1,4 @@
-module datapath (
+module datapath_exe (
     input  logic        clk,
     input  logic        rst_n,
     input  alu_opcodes_e        ALU_op,
