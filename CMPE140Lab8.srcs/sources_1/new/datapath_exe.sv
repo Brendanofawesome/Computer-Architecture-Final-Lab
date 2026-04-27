@@ -54,7 +54,7 @@ module datapath (
   assign is_branch_type = branch;
 
   // --- ALU Logic --- //
-  2to_1mux #(32) alu_d2_mux (
+  mux2to1 #(32) alu_d2_mux (
       .a(se_imm),
       .b(reg_d2),
       .sel(d2_sel),
@@ -84,14 +84,14 @@ module datapath (
       .lo_o(divmul_lo)
   );
 
-  2to_1mux #(32) HI_LO_sel (
+  mux2to1 #(32) HI_LO_sel (
       .a(divmul_hi),
       .b(divmul_lo),
       .sel(mfsel),
       .y(hilo_out)
   );
 
-  2to_1mux #(32) D_wr_sel (
+  mux2to1 #(32) D_wr_sel (
       .a(alu_out),
       .b(hilo_out),
       .sel(mfrd),
@@ -99,7 +99,7 @@ module datapath (
   );
 
   // --- Register Logic --- //
-  register_file reg (
+  register_file regfile (
       .clk(clk),
       .read_addr1_i(rs),
       .read_addr2_i(rt),
@@ -111,14 +111,14 @@ module datapath (
   );
 
   // --- Branch Logic --- //
-  2to_1mux branch_inv_mux (
+  mux2to1 branch_inv_mux (
       .a(alu_zero),
       .b(~alu_zero),
       .sel(branch_inv),
       .y(branch_success)
   );
 
-  2to_1mux branch_sel_mux (
+  mux2to1 branch_sel_mux (
       .a(jr),
       .b(branch_success),
       .sel(branch),

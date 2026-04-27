@@ -23,21 +23,21 @@ module membus_interconnect_top(
     );
 
     // address mapping
-    localparam bit [31:0]   RAM_START_ADDRESS = 'h00000;
-    localparam int          RAM_ADDRESS_SIZE = 8;
-    localparam bit [31:0]   RAM_END_ADDRESS = RAM_START_ADDRESS + (1 << RAM_ADDRESS_SIZE);
+    localparam bit [31:0]   RamStartAddress = 'h00000;
+    localparam int          RamAddressSize = 8;
+    localparam bit [31:0]   RamEndAddress = RamStartAddress + (1 << RamAddressSize);
 
-    localparam bit [31:0]   FACTORIAL_START_ADDRESS = 'h80000;
-    localparam int          FACTORIAL_ADDRESS_SIZE = 4;
-    localparam bit [31:0]   FACTORIAL_END_ADDRESS = FACTORIAL_START_ADDRESS + (1 << FACTORIAL_ADDRESS_SIZE);
+    localparam bit [31:0]   FactorialStartAddress = 'h80000;
+    localparam int          FactorialAddressSize = 4;
+    localparam bit [31:0]   FactorialEndAddress = FactorialStartAddress + (1 << FactorialAddressSize);
 
-    localparam bit [31:0]   GPIO1_START_ADDRESS = 'h90000;
-    localparam int          GPIO1_ADDRESS_SIZE = 4;
-    localparam bit [31:0]   GPIO1_END_ADDRESS = GPIO1_START_ADDRESS + (1 << GPIO1_ADDRESS_SIZE);
+    localparam bit [31:0]   Gpio1StartAddress = 'h90000;
+    localparam int          Gpio1AddressSize = 4;
+    localparam bit [31:0]   Gpio1EndAddress = Gpio1StartAddress + (1 << Gpio1AddressSize);
 
-    localparam bit [31:0]   GPIO2_START_ADDRESS = 'h90010;
-    localparam int          GPIO2_ADDRESS_SIZE = 4;
-    localparam bit [31:0]   GPIO2_END_ADDRESS = GPIO2_START_ADDRESS + (1 << GPIO2_ADDRESS_SIZE);
+    localparam bit [31:0]   Gpio2StartAddress = 'h90010;
+    localparam int          Gpio2AddressSize = 4;
+    localparam bit [31:0]   Gpio2EndAddress = Gpio2StartAddress + (1 << Gpio2AddressSize);
 
     //multiplex control signals
     typedef enum {MEMORY, GPIO1, GPIO2, FACTORIAL_ACCELERATOR, NONE} peripherals_e;
@@ -52,10 +52,10 @@ module membus_interconnect_top(
         if(input_bus.select) begin
             decode_error = 0;
 
-            if      (word_aligned_address >= RAM_START_ADDRESS && word_aligned_address < RAM_END_ADDRESS) current_peripheral = MEMORY;
-            else if (word_aligned_address >= FACTORIAL_START_ADDRESS && word_aligned_address < FACTORIAL_END_ADDRESS) current_peripheral = FACTORIAL_ACCELERATOR;
-            else if (word_aligned_address >= GPIO1_START_ADDRESS && word_aligned_address < GPIO1_END_ADDRESS) current_peripheral = GPIO1;
-            else if (word_aligned_address >= GPIO2_START_ADDRESS && word_aligned_address < GPIO2_END_ADDRESS) current_peripheral = GPIO2;
+            if      (word_aligned_address >= RamStartAddress && word_aligned_address < RamEndAddress) current_peripheral = MEMORY;
+            else if (word_aligned_address >= FactorialStartAddress && word_aligned_address < FactorialEndAddress) current_peripheral = FACTORIAL_ACCELERATOR;
+            else if (word_aligned_address >= Gpio1StartAddress && word_aligned_address < Gpio1EndAddress) current_peripheral = GPIO1;
+            else if (word_aligned_address >= Gpio2StartAddress && word_aligned_address < Gpio2EndAddress) current_peripheral = GPIO2;
             else begin
                 decode_error = 1;
                 current_peripheral = NONE;
@@ -70,10 +70,10 @@ module membus_interconnect_top(
     logic [31:0] selected_peripheral_base, target_address;
     always_comb begin
         unique case(current_peripheral)
-            MEMORY: selected_peripheral_base = RAM_START_ADDRESS;
-            FACTORIAL_ACCELERATOR: selected_peripheral_base = FACTORIAL_START_ADDRESS;
-            GPIO1: selected_peripheral_base = GPIO1_START_ADDRESS;
-            GPIO2: selected_peripheral_base = GPIO2_START_ADDRESS;
+            MEMORY: selected_peripheral_base = RamStartAddress;
+            FACTORIAL_ACCELERATOR: selected_peripheral_base = FactorialStartAddress;
+            GPIO1: selected_peripheral_base = Gpio1StartAddress;
+            GPIO2: selected_peripheral_base = Gpio2StartAddress;
         endcase
         target_address = word_aligned_address - selected_peripheral_base;
 
