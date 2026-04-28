@@ -11,13 +11,13 @@ package shared_definitions_pkg;
     //ALU opcodes
     typedef enum {
         ALU_SLL, ALU_SRL, ALU_SRA,                  //shifts
-        ALU_ADD, ALU_ADDU, ALU_SUB, ALU_SUBU,       //arithmetics
+        ALU_ADD, ALU_SLT, ALU_SLTU,                 //arithmetics
         ALU_AND, ALU_OR, ALU_XOR, ALU_NOR, ALU_LU   //logic
     } alu_opcodes_e;
   
     //instruction functions
     typedef enum {
-    ADD, ADDU, MULT, DIV,               //Arithmetic
+    ADD, ADDU, MULT, MULTU, DIV, DIVU,  //Arithmetic
     AND, OR, XOR, NOR,                  //Logical
     SLL, SRL, SRA,                      //Shifts
     LB, LBU, LH, LHU, LW,               //Mem Load
