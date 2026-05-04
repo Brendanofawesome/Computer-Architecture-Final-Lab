@@ -30,7 +30,7 @@ module divmul_unit(
     logic [31:0] latched_d1;
     logic [31:0] latched_d2;
 
-    always_ff @(posedge clk) begin : duvmul_calc
+    always_ff @(posedge clk) begin : divmul_calc
 
         //RESET LOGIC
         if(!rst_n) begin

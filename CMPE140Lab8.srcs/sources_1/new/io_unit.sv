@@ -1,13 +1,13 @@
 module io_unit(
-    input clk,
-    input rst_n,
+    input logic clk,
+    input logic rst_n,
 
     memory_bus_if.Peripheral bus,
     input logic [1:0] address,
 
-    logic [31:0] output_pins,
-    logic [31:0] input_pins,
-    output [31:0] oe
+    input logic [31:0] input_pins,
+    output logic [31:0] output_pins,
+    output logic [31:0] oe
     );
 
     logic [31:0] input_registers;

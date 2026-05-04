@@ -15,14 +15,14 @@ module register_file (
     // 32 registers, each 32 bits wide
     logic [31:0] registers [31:0];
 
-    // Initialize $zero to always be 0
+    // Initialize registers to 0
     initial begin
-        registers[0] = 32'b0;
+        for (int i = 0; i < 32; i++) registers[i] = 32'b0;
     end
 
     // Synchronous write
     always_ff @(posedge clk) begin
-        if (write_en_i && write_addr_i != 5'b0) begin
+        if (write_en_i && (write_addr_i != 5'b0)) begin
             registers[write_addr_i] <= write_data_i;
         end
     end

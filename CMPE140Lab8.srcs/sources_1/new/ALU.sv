@@ -13,7 +13,8 @@ module ALU(
     input logic [31:0] data2_i,
 
     //data output
-    output logic [31:0] data_o
+    output logic [31:0] data_o,
+    output logic        zero_o
     );
 
     always_comb begin : ALU_DECODE
@@ -26,9 +27,12 @@ module ALU(
             ALU_OR:     data_o = data1_i | data2_i;
             ALU_XOR:    data_o = data1_i ^ data2_i;
             ALU_NOR:    data_o = ~(data1_i | data2_i);
-            ALU_LU:     data_o = data2_i << 16 | data1_i[15:0];
-            ALU_SLT:    data_o = {{31{1'b0}}, ($signed(data1_i) < $signed(data2_i))};
-            ALU_SLTU:   data_o = {{31{1'b0}}, ($unsigned(data1_i) < $unsigned(data2_i))};
+            ALU_LU:     data_o = {data2_i[15:0], 16'b0};
+            ALU_SLT:    data_o = {{31'b0}, ($signed(data1_i) < $signed(data2_i))};
+            ALU_SLTU:   data_o = {{31'b0}, ($unsigned(data1_i) < $unsigned(data2_i))};
+            default:    data_o = 0;
         endcase
     end
+
+    assign zero_o = (data_o == 32'b0);
 endmodule

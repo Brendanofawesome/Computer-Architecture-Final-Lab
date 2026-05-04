@@ -7,7 +7,7 @@ module ram_interface #(parameter int WIDTH = 8)(
     );
 
     localparam int DEPTH = 1 << (WIDTH - 2);
-    logic [31:0] memory [DEPTH-1] = '{default:0};
+    logic [31:0] memory [0:DEPTH-1] = '{default:0};
 
     //handle writes
     always_ff @(posedge clk) begin

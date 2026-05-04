@@ -98,10 +98,10 @@ module opcode_decoder(
     // DETERMINE INSTRUCTION FORMAT //
     //////////////////////////////////
         always_comb begin : ID_FMT
-            unique case(instr_i)
-                32'h0:          format_o = FORMAT_INSTR_R;
-                32'h2, 32'h3:   format_o = FORMAT_INSTR_J;
-                default:        format_O = FOMRAT_INSTR_I;
+            unique case(opcode)
+                6'h00:          format_o = FORMAT_INSTR_R;
+                6'h02, 6'h03:   format_o = FORMAT_INSTR_J;
+                default:        format_o = FORMAT_INSTR_I;
             endcase
         end
 
@@ -135,10 +135,14 @@ module opcode_decoder(
 
                     default:    illegal_instr_o = '1;
                 endcase
-            end else begin
+            end else if(format_o == FORMAT_INSTR_J) begin
+                case(opcode)
+                    6'h02:      function_o = J;
+                    6'h03:      function_o = JAL;
+                    default:    illegal_instr_o = 1'b1;
+                endcase
+            end else begin //I-type
                 unique case(opcode)
-                    OPCODE_J:       function_o = J;
-                    OPCODE_JAL:     function_o = JAL;
                     OPCODE_BEQ:     function_o = BEQ;
                     OPCODE_BNE:     function_o = BNE;
                     OPCODE_ADDI:    function_o = ADDI;
