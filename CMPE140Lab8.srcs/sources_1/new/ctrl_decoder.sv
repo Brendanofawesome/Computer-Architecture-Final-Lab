@@ -32,15 +32,13 @@ module ctrl_decoder(
     );
 
     //EX-stage jumps
-    assign branch_inv_o = function_i == BNE;
+    assign branch_inv_o = (function_i == BNE) ? 1 : X;
     assign branch_o = function_i == BNE || function_i == BEQ;
     assign jr_o = function_i == JR;
 
     //alu control
     assign imm_sel_o = format_i == FORMAT_INSTR_I;
     always_comb begin : ALU_OP_SEL
-        alu_op_o = ALU_ADD;
-
         unique case(function_i)
             SLL:    alu_op_o = ALU_SLL;
             SRL:    alu_op_o = ALU_SRL;

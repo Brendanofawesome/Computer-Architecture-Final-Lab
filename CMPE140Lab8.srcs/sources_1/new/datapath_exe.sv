@@ -1,6 +1,8 @@
 module datapath_exe (
     input  logic        clk,
     input  logic        rst_n,
+
+    //from ID
     input  alu_opcodes_e        ALU_op,
     input  logic [4:0]  shamt,
     input  logic [15:0] imm,
@@ -33,6 +35,9 @@ module datapath_exe (
     output logic        reg_d2_o
 );
 
+    //register control signals
+
+
   logic [31:0] se_imm;
   logic [31:0] d2;
   logic [31:0] reg_d2;
@@ -48,7 +53,7 @@ module datapath_exe (
   assign reg_dst = reg_dst_i;
   assign reg_wr_en = reg_wr_en_i;
   assign reg_d2_o = reg_d2;
-  assign se_imm = imm;
+  assign se_imm = {{16{imm[15]}}, imm};
   assign ra = d1;
   assign bta = b_addr;
   assign is_branch_type = branch;

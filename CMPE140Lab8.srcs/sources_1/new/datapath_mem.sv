@@ -12,7 +12,7 @@ module datapath_mem (
     output logic [4:0]  reg_dst,
     output logic [31:0] ALU_data,
     output logic [31:0] mem_data,
-    output logic [31:0] mem_bus_o     
+    output logic [31:0] mem_bus_o
 );
 
     assign reg_wr_en = reg_wr_en_i;

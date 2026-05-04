@@ -1,8 +1,14 @@
 //implements instruction_decode step
 import shared_definitions_pkg::*;
 
-module instruction_decode(
+module datapath_id(
+        input logic clk,
+        input logic rst_n,
+
+        //from IF
         input logic [31:0] instr_i,
+
+        //from outside datapath
         input logic [31:2] pc_q,
 
         //output wires to ID-EX reg from opcode_decoder
@@ -31,6 +37,15 @@ module instruction_decode(
         output logic [4:0] dst_o
 );
 
+        logic [31:0] registered_instruction;
+        always_ff @( posedge clk ) begin : IF_ID_REG
+                if(!rst_n) begin
+                        registered_instruction <= '0;
+                end else begin
+                        registered_instruction <= instr_i;
+                end
+        end
+
         //internal wires
         instruction_function_e  function_w;
         instruction_format_e    format_w;
@@ -49,7 +64,7 @@ module instruction_decode(
         logic [4:0]             i_type_dst_w;   // output of I_type_dst_mux
 
         opcode_decoder u_opcode_decoder(
-                .instr_i (instr_i),
+                .instr_i (registered_instruction),
 
                 .function_o (function_w),
                 .format_o (format_w),
@@ -109,6 +124,4 @@ module instruction_decode(
 
         // illegal instruction
         assign decode_err_o     = illegal_instr_w;
-endmodule 
-
-
+endmodule
