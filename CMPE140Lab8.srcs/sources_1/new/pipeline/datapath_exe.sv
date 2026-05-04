@@ -1,3 +1,5 @@
+import shared_definitions_pkg::*;
+
 module datapath_exe (
     input  logic        clk,
     input  logic        rst_n,
@@ -36,9 +38,9 @@ module datapath_exe (
     output logic        ex_jump_trig,
     output logic        mul_done_ex,
 
-    output logic        reg_dst_ex,
+    output logic [4:0]  reg_dst_ex,
     output logic        reg_wr_en_ex,
-    output logic        reg_d2_ex,
+    output logic [31:0] reg_d2_ex,
 
     output logic        mem_en_ex,
     output logic        mem_dir_ex,
@@ -98,8 +100,8 @@ module datapath_exe (
             jr_ex <= 1'b0;
             branch_ex <= 1'b0;
             branch_addr_ex <= '0;
-            ALU_op_ex <= '0;
-            divmul_op_ex <= '0;
+            ALU_op_ex <= shared_definitions_pkg::ALU_ADD;
+            divmul_op_ex <= shared_definitions_pkg::DIVMUL_MULT;
             divmul_signed_mode_ex <= 1'b0;
             divmul_start_ex <= 1'b0;
             mem_en_ex_i <= 1'b0;
@@ -179,7 +181,7 @@ module datapath_exe (
       .start_i(divmul_start_ex),
       .d1_i(rs_data_ex),
       .d2_i(rt_data_ex),
-      .ready_o(mul_done_o),
+      .ready_o(divmul_ready_o),
       .hi_o(divmul_hi),
       .lo_o(divmul_lo)
   );
@@ -195,7 +197,7 @@ module datapath_exe (
       .a(alu_out),
       .b(hilo_out),
       .sel(use_hilo_ex),
-      .y(ALU_data)
+      .y(ALU_data_ex)
   );
 
   // --- Register Logic --- //
@@ -226,9 +228,9 @@ module datapath_exe (
   );
 
     // expose registered write-back control and RT data for next stage (module outputs)
+    assign mul_done_ex = divmul_ready_o;
     assign reg_d2_ex = rt_data_ex;
-    assign reg_wr_en_ex = reg_wr_en_ex;
-    assign reg_dst_ex = reg_dst_ex;
+    // reg_dst_ex and reg_wr_en_ex are already internal registers with matching output names
     assign mem_en_ex = mem_en_ex_i;
     assign mem_dir_ex = mem_dir_ex_i;
     assign mem_type_ex = mem_type_ex_i;

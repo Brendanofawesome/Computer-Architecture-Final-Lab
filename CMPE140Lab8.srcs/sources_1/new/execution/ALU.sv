@@ -1,7 +1,7 @@
 //implements the MIPS ALU
 //  unit is entirely combinatorial
 
-import shared_definitions_pkg::alu_opcodes_e; //opcodes
+import shared_definitions_pkg::*; //opcodes
 
 module ALU(
     //control
