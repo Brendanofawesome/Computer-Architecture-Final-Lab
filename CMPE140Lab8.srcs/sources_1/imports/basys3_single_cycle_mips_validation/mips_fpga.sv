@@ -96,7 +96,7 @@ module mips_fpga (
 
             io_buffer led_buffer (
                 .pin            (LED[j]),
-                .gpio_input     (),
+                .gpio_input     ('0),
                 .gpio_output    (io2_output[j] | io2_output[16 + j]),
                 .gpio_oe        (oe2[j] | oe2[16 + j])
             );
