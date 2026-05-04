@@ -62,6 +62,9 @@ module ctrl_decoder(
             SH,
             SW:     alu_op_o = ALU_ADD;
 
+            SUB,
+            SUBU: alu_op_o = ALU_SUB;
+
             AND:    alu_op_o = ALU_AND;
             OR:     alu_op_o = ALU_OR;
             XOR:    alu_op_o = ALU_XOR;

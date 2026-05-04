@@ -145,12 +145,12 @@ module opcode_decoder(
                 unique case(opcode)
                     OPCODE_BEQ:     function_o = BEQ;
                     OPCODE_BNE:     function_o = BNE;
-                    OPCODE_ADDI:    function_o = ADDI;
-                    OPCODE_ADDIU:   function_o = ADDIU;
-                    OPCODE_SLTI:    function_o = SLTI;
-                    OPCODE_SLTIU:   function_o = SLTIU;
+                    OPCODE_ADDI:    function_o = ADD;
+                    OPCODE_ADDIU:   function_o = ADDU;
+                    OPCODE_SLTI:    function_o = SLT;
+                    OPCODE_SLTIU:   function_o = SLTU;
                     OPCODE_ANDI:    function_o = ANDI;
-                    OPCODE_ORI:     function_o = ORI;
+                    OPCODE_ORI:     function_o = OR;
                     OPCODE_LUI:     function_o = LUI;
                     OPCODE_LB:      function_o = LB;
                     OPCODE_LW:      function_o = LW;

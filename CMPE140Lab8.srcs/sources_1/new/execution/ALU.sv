@@ -23,6 +23,7 @@ module ALU(
             ALU_SRL:    data_o = data2_i >> shamt_i;
             ALU_SRA:    data_o = data1_i >>> shamt_i;
             ALU_ADD:    data_o = data1_i + data2_i;
+            ALU_SUB:    data_o = data1_i - data2_i;
             ALU_AND:    data_o = data1_i & data2_i;
             ALU_OR:     data_o = data1_i | data2_i;
             ALU_XOR:    data_o = data1_i ^ data2_i;
