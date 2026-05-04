@@ -138,7 +138,6 @@ module MIPS(
         .is_branch_type_o(is_branch_type),
         .branch_target_o(bta),
         .ra_o(register_address),
-        .ex_jump_trig_o(ex_jump_trig),
         .branch_target_ex_o(),
         .alu_data_ex_o(),
         .reg_wr_data_o(),

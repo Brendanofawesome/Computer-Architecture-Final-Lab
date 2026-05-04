@@ -111,6 +111,8 @@ module opcode_decoder(
         always_comb begin : ID_FNC
 
             if(format_o == FORMAT_INSTR_R) begin
+                illegal_instr_o = '0;
+                function_o = ADD;
                 unique case(funct)
                     FUNCT_SLL:  function_o = SLL;
                     FUNCT_SRL:  function_o = SRL;
@@ -133,7 +135,9 @@ module opcode_decoder(
                     FUCNT_SLT:  function_o = SLT;
                     FUNCT_SLTU: function_o = SLTU;
 
-                    default:    illegal_instr_o = '1;
+                    default: begin
+                        illegal_instr_o = '1;
+                    end
                 endcase
             end else if(format_o == FORMAT_INSTR_J) begin
                 case(opcode)

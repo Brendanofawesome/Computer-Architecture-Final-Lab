@@ -26,7 +26,7 @@ module datapath_top(
     output logic [31:2] mem_address_o,
     output logic        reg_wr_en_o,
     output logic [4:0]  reg_dst_o,
-    output logic        reg_d2_o
+    output logic [31:0] reg_d2_o
 );
 
     // IF-stage instruction fetch
@@ -202,7 +202,6 @@ module datapath_top(
         .data_passback(data_wb)
     );
 
-    // PC generation moved to MIPS module
     assign branch_target_o = bta_ex;
     assign branch_target_ex_o = bta_ex;
 

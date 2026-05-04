@@ -11,7 +11,7 @@ module datapath_if(
 reg [5:0] imem [32];
 
 initial begin
-    $readmemh("data.mem", imem);
+    $readmemh("mipstest.bin", imem);
 end
 
 assign instr_o = imem[address_i];
