@@ -33,8 +33,6 @@ module MIPS(
     logic [31:2] bta;
     logic [31:0] register_address;
 
-    logic [31:0] next_PC;
-
     next_pc_gen pc_gen(
         .imm_addr_i(imm_jump_addr),
         .id_jump_i(id_jump_trig),
