@@ -15,9 +15,10 @@ module datapath_mem (
 
     output logic        reg_wr_en,
     output logic [4:0]  reg_dst,
-    output logic [31:0] ALU_data,
-    output logic [31:0] mem_data,
-    output logic [31:0] mem_bus_o
+    output logic [31:0] reg_wr_data,
+
+    memory_bus_if.Peripheral mem_bus,
+    output logic [31:2] mem_address_o
 );
 
     //register control signals
@@ -52,6 +53,8 @@ module datapath_mem (
         end
     end
 
+    logic [31:0] mem_data_o;
+
     memory_controller mem_controller(
         .address_i (ALU_data_mem),
         .data_i (reg_d2_mem),
@@ -59,11 +62,25 @@ module datapath_mem (
         .sign_extend_i(mem_se_mem),
         .data_type_i(mem_type_mem),
         .data_dir_i(mem_dir_mem),
-        .en_i(mem_en_mem)
+        .en_i(mem_en_mem),
+
+        .data_o(mem_data_o),
+        .membus_o(mem_bus),
+        .address_o(mem_address_o)
     );
 
-    assign reg_wr_en = reg_wr_en_mem;
-    assign reg_dst = reg_dst_mem;
-    assign ALU_data = ALU_data_mem;
+    logic mem_data_select;
+    assign mem_data_select = mem_en_mem && !mem_dir_mem;
 
+    mux2to1 #(.WIDTH(32)) mem_mux(
+        .a(ALU_data_mem),
+        .b(mem_controller.data_out),
+        .sel(mem_data_select),
+        .y(reg_wr_data)
+    );
+
+
+    //passthrough
+    assign reg_wr_en = reg_wr_en_mem;
+    assign reg_dst    = reg_dst_mem;
 endmodule
