@@ -22,6 +22,13 @@ module ctrl_decoder(
     output logic divmul_start_o,
     output logic divmul_signmode_o,
 
+    //MEM signals
+    output logic mem_en_o,          //memory access enable
+    output logic mem_dir_o,         //1 = write, 0 = read
+    output logic [1:0] mem_type_o,  //00 = byte, 01 = halfword, 10 = word
+    output logic mem_se_o,          //sign-extend
+    output logic mem_to_reg_o,      //WB mux: 1 = load from memory, 0 = ALU result
+    
     output logic reg_write_en_o, //enables register write
 
     //ID internal signals
@@ -32,12 +39,12 @@ module ctrl_decoder(
     );
 
     //EX-stage jumps
-    assign branch_inv_o = (function_i == BNE) ? 1 : X;
+    assign branch_inv_o = function_i == BNE;
     assign branch_o = function_i == BNE || function_i == BEQ;
     assign jr_o = function_i == JR;
 
     //alu control
-    assign imm_sel_o = format_i == FORMAT_INSTR_I;
+    assign imm_sel_o = (format_i == FORMAT_INSTR_I) && !branch_o;
     always_comb begin : ALU_OP_SEL
         unique case(function_i)
             SLL:    alu_op_o = ALU_SLL;
@@ -70,6 +77,12 @@ module ctrl_decoder(
 
     //divmul control
     always_comb begin : DIVMUL_CTRL
+        div_mul_op_o      = DIVMUL_MULT;
+        divmul_start_o    = 0;
+        divmul_signmode_o = 0;
+        mfsel_o           = 0;
+        mfrd_o            = 0;
+
         case (function_i)
             //divmul unit control
             MULT:
@@ -109,17 +122,47 @@ module ctrl_decoder(
                     mfrd_o = 1;
                 end
 
-            default:
-                begin
-                    divmul_start_o = 0;
-                    divmul_signmode_o = X;
-                    div_mul_op_o = X;
-
-                    mfsel_o = X;
-                    mfrd_o = 0;
-                end
+            default: ;
         endcase
     end
 
+    //memory control
+    always_comb begin : MEM_CTRL
+        mem_en_o    = 0;
+        mem_dir_o   = 0;
+        mem_type_o  = 2'b10; //word
+        mem_se_o    = 0;
+        mem_to_reg_o = 0;
+
+        case (function_i)
+            LB:  begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b00; mem_se_o = 1; mem_to_reg_o = 1; end
+            LBU: begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b00; mem_se_o = 0; mem_to_reg_o = 1; end
+            LH:  begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b01; mem_se_o = 1; mem_to_reg_o = 1; end
+            LHU: begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b01; mem_se_o = 0; mem_to_reg_o = 1; end
+            LW:  begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b10; mem_se_o = 0; mem_to_reg_o = 1; end
+            SB:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b00; end
+            SH:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b01; end
+            SW:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b10; end
+            default: ;
+        endcase
+    end
+
+    //register write enable
+    always_comb begin : REG_WR_EN_CTRL
+        case (function_i)
+            //write to register
+            ADD, ADDU,
+            AND, OR, XOR, NOR,
+            SLL, SRL, SRA,
+            SLT, SLTI,
+            LUI,
+            LB, LBU, LH, LHU, LW,
+            MFHI, MFLO,
+            JAL:    reg_write_en_o = 1;
+
+            //everything else 
+            default: reg_write_en_o = 0;
+        endcase
+    end
 
 endmodule
