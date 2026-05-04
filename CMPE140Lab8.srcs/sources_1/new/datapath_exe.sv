@@ -35,9 +35,11 @@ module datapath_exe (
     output logic        is_branch_type_ex,
     output logic        ex_jump_trig,
     output logic        mul_done_ex,
+
     output logic        reg_dst_ex,
     output logic        reg_wr_en_ex,
     output logic        reg_d2_ex,
+
     output logic        mem_en_ex,
     output logic        mem_dir_ex,
     output logic [1:0]  mem_type_ex,

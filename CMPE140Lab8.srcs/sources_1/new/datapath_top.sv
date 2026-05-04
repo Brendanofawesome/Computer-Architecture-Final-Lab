@@ -177,6 +177,7 @@ module datapath_top(
         .mem_type(mem_type_ex),
         .mem_dir(mem_dir_ex),
         .mem_en(mem_en_ex),
+        .mem_to_reg(mem_to_reg_ex),
         .reg_wr_en(reg_wr_en_mem),
         .reg_dst(reg_dst_mem),
         .reg_wr_data(reg_wr_data_mem),

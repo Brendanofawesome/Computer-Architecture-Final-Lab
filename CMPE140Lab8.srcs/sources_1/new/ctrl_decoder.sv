@@ -28,7 +28,7 @@ module ctrl_decoder(
     output logic [1:0] mem_type_o,  //00 = byte, 01 = halfword, 10 = word
     output logic mem_se_o,          //sign-extend
     output logic mem_to_reg_o,      //WB mux: 1 = load from memory, 0 = ALU result
-    
+
     output logic reg_write_en_o, //enables register write
 
     //ID internal signals
