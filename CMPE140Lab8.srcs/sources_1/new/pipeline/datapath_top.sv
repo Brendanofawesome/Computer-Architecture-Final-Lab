@@ -9,7 +9,7 @@ module datapath_top(
     input  logic [31:2] pc_i,
 
     // Shared memory bus
-    memory_bus_if.Peripheral mem_bus,
+    memory_bus_if.Controller mem_bus,
 
     // Jump control signals for PC generation (external)
     output logic [25:0] jump_address_o,
@@ -111,9 +111,9 @@ module datapath_top(
     logic [31:0] ra_ex;
     logic        is_branch_type_ex;
     logic        mul_done_ex;
-    logic        reg_dst_ex;
+    logic [4:0]  reg_dst_ex;
     logic        reg_wr_en_ex;
-    logic        reg_d2_ex;
+    logic [31:0] reg_d2_ex;
     logic        mem_en_ex;
     logic        mem_dir_ex;
     logic [1:0]  mem_type_ex;

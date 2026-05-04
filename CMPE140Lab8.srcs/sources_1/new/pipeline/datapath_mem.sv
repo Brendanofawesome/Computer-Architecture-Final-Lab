@@ -9,7 +9,7 @@ module datapath_mem (
     input logic [31:0]  reg_d2,
 
     input logic         mem_se,
-    input logic         mem_type,
+    input logic [1:0]   mem_type,
     input logic         mem_dir,
     input logic         mem_en,
     input logic         mem_to_reg,
@@ -18,7 +18,7 @@ module datapath_mem (
     output logic [4:0]  reg_dst,
     output logic [31:0] reg_wr_data,
 
-    memory_bus_if.Peripheral mem_bus,
+    memory_bus_if.Controller mem_bus,
     output logic [31:2] mem_address_o
 );
 
@@ -28,7 +28,7 @@ module datapath_mem (
     logic [31:0]  ALU_data_mem;
     logic [31:0]  reg_d2_mem;
     logic         mem_se_mem;
-    logic         mem_type_mem;
+    logic [1:0]   mem_type_mem;
     logic         mem_dir_mem;
     logic         mem_en_mem;
     logic         mem_to_reg_mem;
@@ -75,7 +75,7 @@ module datapath_mem (
 
     mux2to1 #(.WIDTH(32)) mem_mux(
         .a(ALU_data_mem),
-        .b(mem_controller.data_out),
+        .b(mem_data_o),
         .sel(mem_to_reg_mem),
         .y(reg_wr_data)
     );

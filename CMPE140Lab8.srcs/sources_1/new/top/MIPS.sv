@@ -35,7 +35,7 @@ module MIPS(
 
     logic [31:0] next_PC;
 
-    next_pc_gen(
+    next_pc_gen pc_gen(
         .imm_addr_i(imm_jump_addr),
         .id_jump_i(id_jump_trig),
         .ex_j_type_i(is_branch_type),
@@ -144,7 +144,7 @@ module MIPS(
         .branch_target_ex_o(),
         .alu_data_ex_o(),
         .reg_wr_data_o(),
-        .mem_address_o(memory_address_input),
+        .mem_address_o(memory_address_input[31:2]),
         .reg_wr_en_o(),
         .reg_dst_o(),
         .reg_d2_o()

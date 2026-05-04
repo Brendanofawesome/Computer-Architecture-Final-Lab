@@ -105,7 +105,7 @@ module mips_fpga (
 
     MIPS mips_top (
             .clk                (clk_db),
-            .rst                (rst_n),
+            .rst_n              (rst_n),
 
             .io1_output         (io1_output),
             .io1_input          (io1_input),

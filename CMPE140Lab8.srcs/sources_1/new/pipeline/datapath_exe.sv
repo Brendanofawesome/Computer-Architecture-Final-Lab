@@ -54,7 +54,6 @@ module datapath_exe (
     logic [31:0] rs_data;
     logic [31:0] rt_data;
     logic [31:0] imm_se;
-    logic [31:0] alu_src2;
     // EX-stage registered signals (suffixed _ex)
     logic [31:0] rs_data_ex;
     logic [31:0] rt_data_ex;
@@ -74,7 +73,6 @@ module datapath_exe (
     logic        jr_ex;
     logic        branch_ex;
     logic [31:2] branch_addr_ex;
-    logic        use_hilo_ex_dly;
     logic        mem_en_ex_i;
     logic        mem_dir_ex_i;
     logic [1:0]  mem_type_ex_i;
@@ -85,7 +83,6 @@ module datapath_exe (
             rs_data_ex <= '0;
             rt_data_ex <= '0;
             imm_se_ex <= '0;
-            alu_src2_ex <= '0;
             shamt_ex <= '0;
             rs_addr_ex <= '0;
             rt_addr_ex <= '0;
@@ -107,12 +104,10 @@ module datapath_exe (
             mem_type_ex_i <= 2'b10;
             mem_se_ex_i <= 1'b0;
             mem_to_reg_ex_i <= 1'b0;
-            use_hilo_ex_dly <= 1'b0;
         end else begin
             rs_data_ex <= rs_data;
             rt_data_ex <= rt_data;
             imm_se_ex <= imm_se;
-            alu_src2_ex <= alu_src2;
             shamt_ex <= shamt_id;
             rs_addr_ex <= rs_addr_id;
             rt_addr_ex <= rt_addr_id;
@@ -134,7 +129,6 @@ module datapath_exe (
             mem_type_ex_i <= mem_type_id;
             mem_se_ex_i <= mem_se_id;
             mem_to_reg_ex_i <= mem_to_reg_id;
-            use_hilo_ex_dly <= mfrd_id;
         end
     end
 
@@ -177,8 +171,8 @@ module datapath_exe (
       .op_i(divmul_op_ex),
       .signed_mode_i(divmul_signed_mode_ex),
       .start_i(divmul_start_ex),
-      .d1_i(rs_data),
-      .d2_i(rt_data),
+      .d1_i(rs_data_ex),
+      .d2_i(rt_data_ex),
       .ready_o(divmul_ready_o),
       .hi_o(divmul_hi),
       .lo_o(divmul_lo)
