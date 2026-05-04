@@ -16,7 +16,7 @@ module datapath_top(
     output logic        id_jump_trig_o,
     output logic        is_branch_type_o,
     output logic [31:2] branch_target_o,
-    output logic [31:0] ra_o,
+    output logic [31:2] ra_o,
     output logic        ex_jump_trig_o,
 
     // Pipeline data visibility
@@ -33,8 +33,6 @@ module datapath_top(
     logic [31:2] instr_if;
 
     datapath_if u_if (
-        .clk(clk),
-        .rst_n(rst_n),
         .address_i(pc_i),
         .instr_o(instr_if)
     );
@@ -56,7 +54,6 @@ module datapath_top(
     logic        reg_write_en_id;
     logic        jump_trig_id;
     logic        jal_trig_id;
-    logic        decode_err_id;
     logic [4:0]  dst_id;
     logic        mem_en_id;
     logic        mem_dir_id;
@@ -88,7 +85,7 @@ module datapath_top(
         .reg_write_en_o(reg_write_en_id),
         .jump_trig_o(jump_trig_id),
         .jal_trig_o(jal_trig_id),
-        .decode_err_o(decode_err_id),
+        .decode_err_o(),
         .mem_en_o(mem_en_id),
         .mem_dir_o(mem_dir_id),
         .mem_type_o(mem_type_id),
@@ -101,7 +98,7 @@ module datapath_top(
     );
 
     assign jump_address_o = imm_addr_id;
-    assign id_jump_trig_o = jump_trig_id;
+    assign id_jump_trig_o = jump_trig_id | jal_trig_id;
 
     // Map ID controls to EX controls used by datapath_exe
 
@@ -110,7 +107,6 @@ module datapath_top(
     logic [31:2] bta_ex;
     logic [31:0] ra_ex;
     logic        is_branch_type_ex;
-    logic        mul_done_ex;
     logic [4:0]  reg_dst_ex;
     logic        reg_wr_en_ex;
     logic [31:0] reg_d2_ex;
@@ -161,7 +157,7 @@ module datapath_top(
         .ra_ex(ra_ex),
         .is_branch_type_ex(is_branch_type_ex),
         .ex_jump_trig(ex_jump_trig_o),
-        .mul_done_ex(mul_done_ex),
+        .mul_done_ex(),
         .reg_dst_ex(reg_dst_ex),
         .reg_wr_en_ex(reg_wr_en_ex),
         .reg_d2_ex(reg_d2_ex),
@@ -209,7 +205,7 @@ module datapath_top(
     assign reg_dst_o = reg_dst_wb;
     assign reg_d2_o = reg_d2_ex;
     assign alu_data_ex_o = alu_data_ex;
-    assign ra_o = ra_ex;
+    assign ra_o = ra_ex[31:2];
     assign is_branch_type_o = is_branch_type_ex;
     assign reg_wr_data_o = data_wb;
 

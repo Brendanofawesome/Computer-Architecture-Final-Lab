@@ -1,9 +1,6 @@
 //instruction fetch
 
 module datapath_if(
-    input clk,
-    input rst_n,
-
     input [31:2] address_i,
     output [31:2] instr_o
 );

@@ -11,6 +11,9 @@ module factorial_module_interface(
     logic [31:0] fact_out;
     logic        fact_done;
     logic        fact_error;
+    logic        data_in_upper_nonzero;
+
+    assign data_in_upper_nonzero = |factorial_bus.data_in[31:4];
 
     // instantiate behavioral accelerator
     Factorial u_factorial(
@@ -32,6 +35,8 @@ module factorial_module_interface(
             // default: clear any transient go request
             go_req <= 1'b0;
             if (factorial_bus.select && |factorial_bus.write_enable) begin
+                // Consume the full 32-bit bus; only the low control bits are architecturally meaningful.
+                if (data_in_upper_nonzero) begin end
                 // factorial_address comes as bits [3:2] from interconnect; map to 2-bit address
                 unique case (factorial_address)
                     2'b00: begin

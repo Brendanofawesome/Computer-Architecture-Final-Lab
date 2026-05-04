@@ -15,10 +15,10 @@ module next_pc_gen(
     input logic [31:2] bta_i, //branch target address, calculated in ex stage and forwarded to this module
 
     //jump to absolute register address
-    input logic [31:0] ra_i, //register address to jump to, calculated in ex stage and forwarded to this module
+    input logic [31:2] ra_i, //register address to jump to, calculated in ex stage and forwarded to this module
 
     //PC
-    input logic [31:0] PC_i, //current PC, used for calculating PC+4 and J-type address
+    input logic [31:2] PC_i, //current PC word address, used for calculating PC+4 and J-type address
     output logic [31:0] nPC_o //next PC, selected from one of the above sources
     );
 
@@ -51,7 +51,7 @@ module next_pc_gen(
     //////////////////////
     // calculate PC + 4 //
     //////////////////////
-        assign PC_plus_4 = PC_i[31:2] + 1;
+        assign PC_plus_4 = PC_i + 1;
 
     ///////////////////////////
     // calculate J-type addr //
@@ -64,7 +64,7 @@ module next_pc_gen(
     ////////////////////////////////
     // calculate register address //
     ////////////////////////////////
-        assign PC_register_address = ra_i[31:2];
+        assign PC_register_address = ra_i;
 
     //////////////////////////////
     // calculate branch address //

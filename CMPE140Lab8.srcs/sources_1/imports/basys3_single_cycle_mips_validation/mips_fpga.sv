@@ -10,13 +10,12 @@ module mips_fpga (
     );
 
     //clk generatoin
-    wire        clk_sec;
     wire        clk_5KHz;
 
     clk_gen clk_gen (
         .clk100MHz          (clk),
         .rst                (rst_b),
-        .clk_sec            (clk_sec),
+        .clk_sec            (),
         .clk_5KHz           (clk_5KHz)
     );
 
@@ -81,9 +80,9 @@ module mips_fpga (
     wire [31:0] io2_output;
     wire [31:0] io2_input;
     wire [31:0] oe2;
-    assign io2_input[31:16] = 16'b0;
+    assign io2_input[31:19] = 13'b0;
+    assign io2_input[18:16] = buttons_debounced;
 
-    wire [15:0] led_inputs_unused;
 
     genvar j;
     generate
@@ -97,9 +96,9 @@ module mips_fpga (
 
             io_buffer led_buffer (
                 .pin            (LED[j]),
-                .gpio_input     (led_inputs_unused[j]),
-                .gpio_output    (io2_output[16 + j]),
-                .gpio_oe        (oe2[16 + j])
+                .gpio_input     (),
+                .gpio_output    (io2_output[j] | io2_output[16 + j]),
+                .gpio_oe        (oe2[j] | oe2[16 + j])
             );
         end
     endgenerate

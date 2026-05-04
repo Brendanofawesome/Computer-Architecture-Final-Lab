@@ -16,7 +16,8 @@ module MIPS(
     //PC Register //
     ////////////////
 
-    logic [31:0] PC_q, PC_d; //PC register!
+    logic [31:2] PC_q, PC_d; // PC word-address register
+    logic [31:0] PC_d_full;
     always @( posedge clk ) begin : PC_reg
         if(!rst_n)
             PC_q <= '0;
@@ -31,7 +32,7 @@ module MIPS(
     logic ex_jump_trig;
 
     logic [31:2] bta;
-    logic [31:0] register_address;
+    logic [31:2] register_address;
 
     next_pc_gen pc_gen(
         .imm_addr_i(imm_jump_addr),
@@ -41,17 +42,16 @@ module MIPS(
         .bta_i(bta),
         .ra_i(register_address),
         .PC_i(PC_q),
-        .nPC_o(PC_d)
+        .nPC_o(PC_d_full)
     );
+    assign PC_d = PC_d_full[31:2];
 
     ///////////////////////////////
     //Memory Bus and Peripherals //
     ///////////////////////////////
 
     memory_bus_if membus_input();
-    logic [31:0] memory_address_input;
-    logic memory_decode_error;
-    assign memory_address_input[1:0] = 2'b00;
+    logic [31:2] memory_address_input;
 
     memory_bus_if membus_ram();
     logic [7:2] memory_address_ram;
@@ -66,13 +66,10 @@ module MIPS(
     logic [3:2] memory_address_gpio2;
 
     membus_interconnect_top peripherals(
-        .clk(clk),
-        .rst_n(rst_n),
-
         .address(memory_address_input),
         .input_bus(membus_input),
 
-        .decode_error(memory_decode_error),
+        .decode_error(),
 
         .ram_bus(membus_ram),
         .ram_address(memory_address_ram),
@@ -130,7 +127,7 @@ module MIPS(
         .clk(clk),
         .rst_n(rst_n),
 
-        .pc_i(PC_q[31:2]),
+        .pc_i(PC_q),
 
         .mem_bus(membus_input),
 
@@ -143,7 +140,7 @@ module MIPS(
         .branch_target_ex_o(),
         .alu_data_ex_o(),
         .reg_wr_data_o(),
-        .mem_address_o(memory_address_input[31:2]),
+        .mem_address_o(memory_address_input),
         .reg_wr_en_o(),
         .reg_dst_o(),
         .reg_d2_o()

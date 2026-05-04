@@ -1,10 +1,7 @@
 //performs memory bus routing by decoding address to dispatch writes and multiplex reads
 
 module membus_interconnect_top(
-    input logic clk,
-    input logic rst_n,
-
-    input logic [31:0] address,
+    input logic [31:2] address,
     memory_bus_if.Peripheral input_bus,
 
     output logic decode_error,
@@ -45,7 +42,7 @@ module membus_interconnect_top(
 
     //memory is word-oriented
     logic [31:0] word_aligned_address;
-    assign word_aligned_address = {address[31:2], 2'b00};
+    assign word_aligned_address = {address, 2'b00};
 
     // decode selected peripheral from address
     always_comb begin : address_decode
