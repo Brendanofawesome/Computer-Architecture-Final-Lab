@@ -38,6 +38,9 @@ module datapath_id(
         output logic [1:0]      mem_type_o,
         output logic            mem_se_o,
         output logic            mem_to_reg_o,
+        output divmul_function_e div_mul_op_o,
+        output logic            divmul_start_o,
+        output logic            divmul_signmode_o,
 
         //output wires to ID-EX reg from jal_dst_mux
         output logic [4:0] dst_o
@@ -104,6 +107,9 @@ module datapath_id(
 
                 .imm_sel_o (imm_sel_o),
                 .alu_op_o (alu_op_o),
+                .div_mul_op_o (div_mul_op_o),
+                .divmul_start_o (divmul_start_o),
+                .divmul_signmode_o (divmul_signmode_o),
 
                 .mem_en_o (mem_en_o),
                 .mem_dir_o (mem_dir_o),

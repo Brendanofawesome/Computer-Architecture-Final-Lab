@@ -71,8 +71,8 @@ module mips_fpga (
         );
 
     //debounce the button inputs
-    logic [3:0] buttons_debounced;
-    button_debouncer bd [3:0] (
+    logic [2:0] buttons_debounced;
+    button_debouncer bd [2:0] (
             .clk                (clk_5KHz),
             .button             (buttons),
             .debounced_button   (buttons_debounced)

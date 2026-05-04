@@ -63,6 +63,9 @@ module datapath_top(
     logic [1:0]  mem_type_id;
     logic        mem_se_id;
     logic        mem_to_reg_id;
+    divmul_function_e divmul_op_id;
+    logic             divmul_start_id;
+    logic             divmul_signmode_id;
 
     datapath_id u_id (
         .clk(clk),
@@ -91,6 +94,9 @@ module datapath_top(
         .mem_type_o(mem_type_id),
         .mem_se_o(mem_se_id),
         .mem_to_reg_o(mem_to_reg_id),
+        .div_mul_op_o(divmul_op_id),
+        .divmul_start_o(divmul_start_id),
+        .divmul_signmode_o(divmul_signmode_id),
         .dst_o(dst_id)
     );
 
@@ -142,9 +148,9 @@ module datapath_top(
         .reg_wb_data(data_wb),
         .reg_wb_addr(reg_dst_wb),
         .reg_wb_en(reg_wr_en_wb),
-        .divmul_op_id(divmul_op_i),
-        .divmul_signed_mode_id(divmul_signed_mode_i),
-        .divmul_start_id(divmul_start_i),
+        .divmul_op_id(divmul_op_id),
+        .divmul_signed_mode_id(divmul_signmode_id),
+        .divmul_start_id(divmul_start_id),
         .mem_en_id(mem_en_id),
         .mem_dir_id(mem_dir_id),
         .mem_type_id(mem_type_id),

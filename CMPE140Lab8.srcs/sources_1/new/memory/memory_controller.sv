@@ -8,7 +8,7 @@ module memory_controller(
     input logic        en_i,
 
     output logic [31:0] data_o,
-    memory_bus_if.Controller membus_o,
+    memory_bus_if.Peripheral membus_o,
     output logic [31:2] address_o
     );
 

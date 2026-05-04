@@ -67,12 +67,10 @@ module datapath_exe (
     logic [4:0]  shamt_ex;
     logic [4:0]  rs_addr_ex;
     logic [4:0]  rt_addr_ex;
-    logic [4:0]  reg_dst_ex;
     logic        d2_sel_ex;
     logic        hi_lo_sel_ex;
     logic        use_hilo_ex;
     logic        branch_inv_ex;
-    logic        reg_wr_en_ex;
     logic        jr_ex;
     logic        branch_ex;
     logic [31:2] branch_addr_ex;
@@ -179,8 +177,8 @@ module datapath_exe (
       .op_i(divmul_op_ex),
       .signed_mode_i(divmul_signed_mode_ex),
       .start_i(divmul_start_ex),
-      .d1_i(rs_data_ex),
-      .d2_i(rt_data_ex),
+      .d1_i(rs_data),
+      .d2_i(rt_data),
       .ready_o(divmul_ready_o),
       .hi_o(divmul_hi),
       .lo_o(divmul_lo)
@@ -203,8 +201,8 @@ module datapath_exe (
   // --- Register Logic --- //
     register_file regfile (
             .clk(clk),
-            .read_addr1_i(rs_addr_id),
-            .read_addr2_i(rt_addr_id),
+            .read_addr1_i(rs_addr_ex),
+            .read_addr2_i(rt_addr_ex),
             .write_data_i(reg_wb_data),
             .write_addr_i(reg_wb_addr),
             .write_en_i(reg_wb_en),
@@ -230,6 +228,7 @@ module datapath_exe (
     // expose registered write-back control and RT data for next stage (module outputs)
     assign mul_done_ex = divmul_ready_o;
     assign reg_d2_ex = rt_data_ex;
+
     // reg_dst_ex and reg_wr_en_ex are already internal registers with matching output names
     assign mem_en_ex = mem_en_ex_i;
     assign mem_dir_ex = mem_dir_ex_i;

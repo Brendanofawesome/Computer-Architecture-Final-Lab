@@ -44,6 +44,7 @@
     <Option Name="SimulatorGccVersionRiviera" Val="9.3.0"/>
     <Option Name="SimulatorGccVersionActiveHdl" Val="9.3.0"/>
     <Option Name="BoardPart" Val=""/>
+    <Option Name="SourceMgmtMode" Val="DisplayOnly"/>
     <Option Name="ActiveSimSet" Val="sim_1"/>
     <Option Name="DefaultLib" Val="xil_defaultlib"/>
     <Option Name="ProjectType" Val="Default"/>
@@ -91,7 +92,6 @@
       <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/sources_1/imports/basys3_single_cycle_mips_validation/hex_to_7seg.v">
         <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../../../Downloads/basys3_single_cycle_mips_validation/hex_to_7seg.v"/>
           <Attr Name="ImportTime" Val="1774282230"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -99,7 +99,14 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/io/Factorial.v">
+      <File Path="$PSRCDIR/sources_1/new/memory/memory_interface.sv">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/utils/shared_definitions.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
@@ -140,13 +147,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/utils/shared_definitions.sv">
-        <FileInfo>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PSRCDIR/sources_1/new/execution/ALU.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -154,14 +154,14 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/io/GPIO_top.sv">
+      <File Path="$PSRCDIR/sources_1/new/io/Factorial.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/memory/memory_interface.sv">
+      <File Path="$PSRCDIR/sources_1/new/io/GPIO_top.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>

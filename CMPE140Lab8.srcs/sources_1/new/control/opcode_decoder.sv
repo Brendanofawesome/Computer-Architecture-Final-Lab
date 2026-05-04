@@ -149,7 +149,7 @@ module opcode_decoder(
                     OPCODE_ADDIU:   function_o = ADDU;
                     OPCODE_SLTI:    function_o = SLT;
                     OPCODE_SLTIU:   function_o = SLTU;
-                    OPCODE_ANDI:    function_o = ANDI;
+                    OPCODE_ANDI:    function_o = AND;
                     OPCODE_ORI:     function_o = OR;
                     OPCODE_LUI:     function_o = LUI;
                     OPCODE_LB:      function_o = LB;

@@ -72,7 +72,7 @@ module ctrl_decoder(
             LUI:    alu_op_o = ALU_LU;
 
             SLT,
-            SLTI:   alu_op_o = ALU_SLT;
+            SLTU:   alu_op_o = ALU_SLT;
 
             default: alu_op_o = ALU_ADD;
         endcase
@@ -157,7 +157,7 @@ module ctrl_decoder(
             ADD, ADDU,
             AND, OR, XOR, NOR,
             SLL, SRL, SRA,
-            SLT, SLTI,
+            SLT, SLTU,
             LUI,
             LB, LBU, LH, LHU, LW,
             MFHI, MFLO,
