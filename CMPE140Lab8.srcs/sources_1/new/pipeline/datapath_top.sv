@@ -30,7 +30,7 @@ module datapath_top(
 );
 
     // IF-stage instruction fetch
-    logic [31:2] instr_if;
+    logic [31:0] instr_if;
 
     datapath_if u_if (
         .address_i(pc_i),
@@ -50,6 +50,7 @@ module datapath_top(
     logic        branch_id;
     logic        jr_id;
     logic        imm_sel_id;
+    logic        imm_zero_ext_id;
     alu_opcodes_e alu_op_id;
     logic        reg_write_en_id;
     logic        jump_trig_id;
@@ -67,7 +68,7 @@ module datapath_top(
     datapath_id u_id (
         .clk(clk),
         .rst_n(rst_n),
-        .instr_i({instr_if, 2'b00}),
+        .instr_i(instr_if),
         .pc_q(pc_i),
         .shamt_o(shamt_id),
         .imm_o(imm_id),
@@ -81,6 +82,7 @@ module datapath_top(
         .branch_o(branch_id),
         .jr_o(jr_id),
         .imm_sel_o(imm_sel_id),
+        .imm_zero_ext_o(imm_zero_ext_id),
         .alu_op_o(alu_op_id),
         .reg_write_en_o(reg_write_en_id),
         .jump_trig_o(jump_trig_id),
@@ -131,6 +133,7 @@ module datapath_top(
         .shamt_id(shamt_id),
         .imm_id(imm_id),
         .d2_sel_id(imm_sel_id),
+        .imm_zero_ext_id(imm_zero_ext_id),
         .mfsel_id(mfsel_id),
         .mfrd_id(mfrd_id),
         .rs_addr_id(rs_id),

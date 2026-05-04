@@ -21,7 +21,7 @@ module ALU(
         unique case(opcode_i)
             ALU_SLL:    data_o = data2_i << shamt_i;
             ALU_SRL:    data_o = data2_i >> shamt_i;
-            ALU_SRA:    data_o = data1_i >>> shamt_i;
+            ALU_SRA:    data_o = $signed(data2_i) >>> shamt_i;
             ALU_ADD:    data_o = data1_i + data2_i;
             ALU_SUB:    data_o = data1_i - data2_i;
             ALU_AND:    data_o = data1_i & data2_i;

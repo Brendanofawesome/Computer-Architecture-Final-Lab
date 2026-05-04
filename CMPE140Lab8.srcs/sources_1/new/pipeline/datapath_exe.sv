@@ -9,6 +9,7 @@ module datapath_exe (
     input  logic [4:0]  shamt_id,
     input  logic [15:0] imm_id,
     input  logic        d2_sel_id,
+    input  logic        imm_zero_ext_id,
     input  logic        mfsel_id,
     input  logic        mfrd_id,
     input  logic [4:0]  rs_addr_id,
@@ -142,15 +143,15 @@ module datapath_exe (
   logic        branch_success;
   logic        divmul_ready_o;
 
-    assign imm_se = {{16{imm_id[15]}}, imm_id};
+    assign imm_se = imm_zero_ext_id ? {16'b0, imm_id} : {{16{imm_id[15]}}, imm_id};
     assign ra_ex = rs_data_ex;
     assign bta_ex = branch_addr_ex;
     assign is_branch_type_ex = branch_ex;
 
   // --- ALU Logic --- //
   mux2to1 #(32) alu_d2_mux (
-      .a(imm_se_ex),
-      .b(rt_data_ex),
+      .a(rt_data_ex),
+      .b(imm_se_ex),
       .sel(d2_sel_ex),
       .y(alu_src2_ex)
   );

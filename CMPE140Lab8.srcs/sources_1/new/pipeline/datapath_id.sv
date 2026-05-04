@@ -28,6 +28,7 @@ module datapath_id(
         output logic            branch_o,
         output logic            jr_o,
         output logic            imm_sel_o,
+        output logic            imm_zero_ext_o,
         output alu_opcodes_e    alu_op_o,
         output logic            reg_write_en_o,
         output logic            jump_trig_o,
@@ -104,6 +105,7 @@ module datapath_id(
                 .jr_o (jr_o),
 
                 .imm_sel_o (imm_sel_o),
+                .imm_zero_ext_o (imm_zero_ext_o),
                 .alu_op_o (alu_op_o),
                 .div_mul_op_o (div_mul_op_o),
                 .divmul_start_o (divmul_start_o),

@@ -16,6 +16,7 @@ module ctrl_decoder(
     output logic jr_o, //signals a jr instruction
 
     output logic imm_sel_o, //selects immediate data instead of reg2
+    output logic imm_zero_ext_o, //zero-extend immediate for logical immediates
     output alu_opcodes_e alu_op_o, //selects alu operation
 
     output divmul_function_e div_mul_op_o, //selects the divmul op
@@ -45,6 +46,7 @@ module ctrl_decoder(
 
     //alu control
     assign imm_sel_o = (format_i == FORMAT_INSTR_I) && !branch_o;
+    assign imm_zero_ext_o = (format_i == FORMAT_INSTR_I) && (function_i == AND || function_i == OR || function_i == XOR);
     always_comb begin : ALU_OP_SEL
         unique case(function_i)
             SLL:    alu_op_o = ALU_SLL;

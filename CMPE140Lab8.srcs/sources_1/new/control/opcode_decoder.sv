@@ -16,13 +16,16 @@ typedef enum {
     OPCODE_SLTIU    = 6'h0B,
     OPCODE_ANDI     = 6'h0C,
     OPCODE_ORI      = 6'h0D,
+    OPCODE_XORI     = 6'h0E,
     OPCODE_LUI      = 6'h0F,
     OPCODE_LB       = 6'h20,
+    OPCODE_LH       = 6'h21,
     OPCODE_LW       = 6'h23,
     OPCODE_LBU      = 6'h24,
     OPCODE_LHU      = 6'h25,
     OPCODE_SB       = 6'h28,
     OPCODE_SH       = 6'h29,
+    OPCODE_SW       = 6'h2B,
 
     //unsupported opcodes
     OPCODE_BLEZ     = 6'h6,
@@ -156,13 +159,16 @@ module opcode_decoder(
                     OPCODE_SLTIU:   function_o = SLTU;
                     OPCODE_ANDI:    function_o = AND;
                     OPCODE_ORI:     function_o = OR;
+                    OPCODE_XORI:    function_o = XOR;
                     OPCODE_LUI:     function_o = LUI;
                     OPCODE_LB:      function_o = LB;
+                    OPCODE_LH:      function_o = LH;
                     OPCODE_LW:      function_o = LW;
                     OPCODE_LBU:     function_o = LBU;
                     OPCODE_LHU:     function_o = LHU;
                     OPCODE_SB:      function_o = SB;
                     OPCODE_SH:      function_o = SH;
+                    OPCODE_SW:      function_o = SW;
 
                     default:        illegal_instr_o = '1;
                 endcase
