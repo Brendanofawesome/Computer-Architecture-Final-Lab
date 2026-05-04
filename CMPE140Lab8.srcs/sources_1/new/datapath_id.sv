@@ -22,9 +22,8 @@ module datapath_id(
         output logic [31:2] b_adder_o,
 
         //output wires to ID-EX reg from ctrl_decoder
-        output logic mflo_o,
-        output logic            mflo_o,
-        output logic            mfhi_o,
+        output logic            mfsel_o,
+        output logic            mfrd_o,
         output logic            branch_inv_o,
         output logic            branch_o,
         output logic            jr_o,
@@ -32,6 +31,13 @@ module datapath_id(
         output alu_opcodes_e    alu_op_o,
         output logic            reg_write_en_o,
         output logic            jump_trig_o,
+        output logic            jal_trig_o,
+        output logic            decode_err_o,
+        output logic            mem_en_o,
+        output logic            mem_dir_o,
+        output logic [1:0]      mem_type_o,
+        output logic            mem_se_o,
+        output logic            mem_to_reg_o,
 
         //output wires to ID-EX reg from jal_dst_mux
         output logic [4:0] dst_o
@@ -89,8 +95,8 @@ module datapath_id(
                 .function_i (function_w),
                 .format_i (format_w),
 
-                .mflo_o (mflo_o),
-                .mfhi_o (mfhi_o),
+                .mfsel_o (mfsel_o),
+                .mfrd_o (mfrd_o),
 
                 .branch_inv_o (branch_inv_o),
                 .branch_o (branch_o),
@@ -99,20 +105,26 @@ module datapath_id(
                 .imm_sel_o (imm_sel_o),
                 .alu_op_o (alu_op_o),
 
+                .mem_en_o (mem_en_o),
+                .mem_dir_o (mem_dir_o),
+                .mem_type_o (mem_type_o),
+                .mem_se_o (mem_se_o),
+                .mem_to_reg_o (mem_to_reg_o),
+
                 .reg_write_en_o (reg_write_en_o),
 
-                .jump_trig_o (jump_trig_o),
-                .is_I_type_o (is_I_type_w),
-                .jal_trig_o (jal_trig_w) //signal needs to be added in the ctrl_decoder module
+                .jump_trig_o (jump_trig_w),
+                .jal_trig_o (jal_trig_w),
+                .is_I_type_o (is_I_type_w)
         );
 
         // i_type_dst_mux output select
-        assign i_type_dst_w = is_i_type_w ? rs_w : rd_w;
+        assign i_type_dst_w = is_I_type_w ? rs_w : rd_w;
 
         // jal_dst_mux outpu select
         assign dst_o = jal_trig_w ? 5'd31 : i_type_dst_w;
 
-        //output assignments 
+        //output assignments
         assign shamt_o = shamt_w;
         assign imm_o = imm_w;
         assign imm_addr_o = imm_addr_w;
@@ -123,5 +135,5 @@ module datapath_id(
         assign jump_trig_o = jump_trig_w;
 
         // illegal instruction
-        assign decode_err_o     = illegal_instr_w;
+        assign decode_err_o = illegal_instr_w;
 endmodule

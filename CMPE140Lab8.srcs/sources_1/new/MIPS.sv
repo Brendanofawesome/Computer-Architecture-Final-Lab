@@ -119,17 +119,30 @@ module MIPS(
     //////////////
     // Datapath //
     //////////////
-    databath_top datapath(
+    datapath_top datapath(
         .clk(clk),
         .rst_n(rst_n),
 
-        .PC_i(PC_q),
+        .pc_i(PC_q[31:2]),
+
+        .divmul_op_i('0),
+        .divmul_signed_mode_i('0),
+        .divmul_start_i('0),
+
+        .mem_bus(membus_input),
 
         .jump_address_o(imm_jump_addr),
-        .jump_trig_o(id_jump_trig),
+        .id_jump_trig_o(id_jump_trig),
+        .is_branch_type_o(is_branch_type),
         .branch_target_o(bta),
         .ra_o(register_address),
-        .branch_o(is_branch_type),
-        .jump_trig_o(ex_jump_trig),
+        .ex_jump_trig_o(ex_jump_trig),
+        .branch_target_ex_o(),
+        .alu_data_ex_o(),
+        .reg_wr_data_o(),
+        .mem_address_o(memory_address_input),
+        .reg_wr_en_o(),
+        .reg_dst_o(),
+        .reg_d2_o()
     );
 endmodule
