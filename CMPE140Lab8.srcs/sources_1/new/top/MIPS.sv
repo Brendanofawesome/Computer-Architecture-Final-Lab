@@ -116,6 +116,14 @@ module MIPS(
         .address(memory_address_ram)
     );
 
+    // Factorial accelerator interface
+    factorial_module_interface factorial_if (
+        .clk(clk),
+        .rst_n(rst_n),
+        .factorial_bus(membus_factorial),
+        .factorial_address(memory_address_factorial)
+    );
+
     //////////////
     // Datapath //
     //////////////
