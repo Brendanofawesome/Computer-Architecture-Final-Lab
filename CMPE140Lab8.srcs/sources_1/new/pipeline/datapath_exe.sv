@@ -23,6 +23,11 @@ module datapath_exe (
     input  divmul_function_e divmul_op_id,
     input  logic        divmul_signed_mode_id,
     input  logic        divmul_start_id,
+    input  logic        mem_en_id,
+    input  logic        mem_dir_id,
+    input  logic [1:0]  mem_type_id,
+    input  logic        mem_se_id,
+    input  logic        mem_to_reg_id,
 
     output logic [31:0] ALU_data_ex,
     output logic [31:2] bta_ex,
@@ -30,9 +35,16 @@ module datapath_exe (
     output logic        is_branch_type_ex,
     output logic        ex_jump_trig,
     output logic        mul_done_ex,
+
     output logic        reg_dst_ex,
     output logic        reg_wr_en_ex,
-    output logic        reg_d2_ex
+    output logic        reg_d2_ex,
+
+    output logic        mem_en_ex,
+    output logic        mem_dir_ex,
+    output logic [1:0]  mem_type_ex,
+    output logic        mem_se_ex,
+    output logic        mem_to_reg_ex
 );
 
         // --- EX-stage pipeline registers for control and data --- //
@@ -63,6 +75,11 @@ module datapath_exe (
     logic        branch_ex;
     logic [31:2] branch_addr_ex;
     logic        use_hilo_ex_dly;
+    logic        mem_en_ex_i;
+    logic        mem_dir_ex_i;
+    logic [1:0]  mem_type_ex_i;
+    logic        mem_se_ex_i;
+    logic        mem_to_reg_ex_i;
     always_ff @(posedge clk or negedge rst_n) begin : ID_EX_REG
         if (!rst_n) begin
             rs_data_ex <= '0;
@@ -85,6 +102,11 @@ module datapath_exe (
             divmul_op_ex <= '0;
             divmul_signed_mode_ex <= 1'b0;
             divmul_start_ex <= 1'b0;
+            mem_en_ex_i <= 1'b0;
+            mem_dir_ex_i <= 1'b0;
+            mem_type_ex_i <= 2'b10;
+            mem_se_ex_i <= 1'b0;
+            mem_to_reg_ex_i <= 1'b0;
             use_hilo_ex_dly <= 1'b0;
         end else begin
             rs_data_ex <= rs_data;
@@ -107,6 +129,11 @@ module datapath_exe (
             divmul_op_ex <= divmul_op_id;
             divmul_signed_mode_ex <= divmul_signed_mode_id;
             divmul_start_ex <= divmul_start_id;
+            mem_en_ex_i <= mem_en_id;
+            mem_dir_ex_i <= mem_dir_id;
+            mem_type_ex_i <= mem_type_id;
+            mem_se_ex_i <= mem_se_id;
+            mem_to_reg_ex_i <= mem_to_reg_id;
             use_hilo_ex_dly <= mfrd_id;
         end
     end
@@ -202,5 +229,10 @@ module datapath_exe (
     assign reg_d2_ex = rt_data_ex;
     assign reg_wr_en_ex = reg_wr_en_ex;
     assign reg_dst_ex = reg_dst_ex;
+    assign mem_en_ex = mem_en_ex_i;
+    assign mem_dir_ex = mem_dir_ex_i;
+    assign mem_type_ex = mem_type_ex_i;
+    assign mem_se_ex = mem_se_ex_i;
+    assign mem_to_reg_ex = mem_to_reg_ex_i;
 
 endmodule

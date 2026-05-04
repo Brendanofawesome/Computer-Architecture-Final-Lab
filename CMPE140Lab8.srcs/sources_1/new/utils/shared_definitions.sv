@@ -14,7 +14,7 @@ package shared_definitions_pkg;
         ALU_ADD, ALU_SLT, ALU_SLTU,                 //arithmetics
         ALU_AND, ALU_OR, ALU_XOR, ALU_NOR, ALU_LU   //logic
     } alu_opcodes_e;
-  
+
     //instruction functions
     typedef enum {
     ADD, ADDU, MULT, MULTU, DIV, DIVU,  //Arithmetic

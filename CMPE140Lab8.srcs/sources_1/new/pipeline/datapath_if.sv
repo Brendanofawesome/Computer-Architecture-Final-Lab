@@ -1,0 +1,19 @@
+//instruction fetch
+
+module datapath_if(
+    input clk,
+    input rst_n,
+
+    input [31:2] address_i,
+    output [31:2] instr_o
+);
+
+reg [5:0] imem [32];
+
+initial begin
+    $readmemh("data.mem", imem);
+end
+
+assign instr_o = imem[address_i];
+
+endmodule
