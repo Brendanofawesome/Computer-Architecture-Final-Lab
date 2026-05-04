@@ -67,37 +67,35 @@ module membus_interconnect_top(
     end
 
     // multiplex write requests
-    logic [31:0] selected_peripheral_base, target_address;
     always_comb begin : write_dispatch
-        selected_peripheral_base = '0;
-        unique case(current_peripheral)
-            MEMORY: selected_peripheral_base = RamStartAddress;
-            FACTORIAL_ACCELERATOR: selected_peripheral_base = FactorialStartAddress;
-            GPIO1: selected_peripheral_base = Gpio1StartAddress;
-            GPIO2: selected_peripheral_base = Gpio2StartAddress;
-            default: selected_peripheral_base = '0;
-        endcase
-        target_address = word_aligned_address - selected_peripheral_base;
+        ram_address       = '0;
+        factorial_address = '0;
+        gpio1_address     = '0;
+        gpio2_address     = '0;
 
-        ram_address = target_address[7:2];
         ram_bus.select = current_peripheral == MEMORY && !decode_error;
         ram_bus.data_in = input_bus.data_in;
         ram_bus.write_enable = input_bus.write_enable;
 
-        factorial_address = target_address[3:2];
         factorial_bus.select = current_peripheral == FACTORIAL_ACCELERATOR && !decode_error;
         factorial_bus.data_in = input_bus.data_in;
         factorial_bus.write_enable = input_bus.write_enable;
 
-        gpio1_address = target_address[3:2];
         gpio1_bus.select = current_peripheral == GPIO1 && !decode_error;
         gpio1_bus.data_in = input_bus.data_in;
         gpio1_bus.write_enable = input_bus.write_enable;
 
-        gpio2_address = target_address[3:2];
         gpio2_bus.select = current_peripheral == GPIO2 && !decode_error;
         gpio2_bus.data_in = input_bus.data_in;
         gpio2_bus.write_enable = input_bus.write_enable;
+
+        unique case(current_peripheral)
+            MEMORY: ram_address = word_aligned_address[7:2] - RamStartAddress[7:2];
+            FACTORIAL_ACCELERATOR: factorial_address = word_aligned_address[3:2] - FactorialStartAddress[3:2];
+            GPIO1: gpio1_address = word_aligned_address[3:2] - Gpio1StartAddress[3:2];
+            GPIO2: gpio2_address = word_aligned_address[3:2] - Gpio2StartAddress[3:2];
+            default: ;
+        endcase
     end
 
     // multiplex reads

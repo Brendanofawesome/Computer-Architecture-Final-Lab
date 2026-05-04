@@ -81,6 +81,7 @@ module mips_fpga (
     wire [31:0] io2_output;
     wire [31:0] io2_input;
     wire [31:0] oe2;
+    assign io2_input[31:16] = 16'b0;
 
     wire [15:0] led_inputs_unused;
 

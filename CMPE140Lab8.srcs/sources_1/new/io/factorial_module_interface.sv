@@ -33,9 +33,7 @@ module factorial_module_interface(
             go_req <= 1'b0;
             if (factorial_bus.select && |factorial_bus.write_enable) begin
                 // factorial_address comes as bits [3:2] from interconnect; map to 2-bit address
-                    logic [1:0] addr;
-                    addr <= {factorial_address[3], factorial_address[2]};
-                unique case (addr)
+                unique case (factorial_address)
                     2'b00: begin
                         // write input value (lower 4 bits)
                         hex_in_reg <= factorial_bus.data_in[3:0];
@@ -54,9 +52,7 @@ module factorial_module_interface(
     always_comb begin
         factorial_bus.data_out = '0;
         if (factorial_bus.select) begin
-            logic [1:0] addr;
-            addr = {factorial_address[3], factorial_address[2]};
-            unique case (addr)
+            unique case (factorial_address)
                 2'b00: factorial_bus.data_out = fact_out; // result
                 2'b01: begin
                     factorial_bus.data_out = {30'b0, fact_error, fact_done};

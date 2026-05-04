@@ -6,17 +6,17 @@ package shared_definitions_pkg;
     ////////////////
 
     //instruction format codes
-    typedef enum {FORMAT_INSTR_I, FORMAT_INSTR_J, FORMAT_INSTR_R} instruction_format_e;
+    typedef enum logic [1:0] {FORMAT_INSTR_I, FORMAT_INSTR_J, FORMAT_INSTR_R} instruction_format_e;
 
     //ALU opcodes
-    typedef enum {
+    typedef enum logic [3:0] {
         ALU_SLL, ALU_SRL, ALU_SRA,                  //shifts
         ALU_ADD, ALU_SLT, ALU_SLTU, ALU_SUB,        //arithmetics
         ALU_AND, ALU_OR, ALU_XOR, ALU_NOR, ALU_LU   //logic
     } alu_opcodes_e;
 
     //instruction functions
-    typedef enum {
+    typedef enum logic [5:0] {
     ADD, ADDU, MULT, MULTU, DIV, DIVU,  //Arithmetic
     SUB, SUBU,                          //Subtractions
     AND, OR, XOR, NOR,                  //Logical
@@ -30,5 +30,5 @@ package shared_definitions_pkg;
     } instruction_function_e;
 
     //multdiv functions
-    typedef enum {DIVMUL_MULT, DIVMUL_DIV} divmul_function_e;
+    typedef enum logic {DIVMUL_MULT, DIVMUL_DIV} divmul_function_e;
 endpackage

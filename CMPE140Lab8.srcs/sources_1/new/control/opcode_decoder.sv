@@ -109,10 +109,11 @@ module opcode_decoder(
     // DETERMINE INSTRUCTION FUNCTION //
     ////////////////////////////////////
         always_comb begin : ID_FNC
+            // Defaults prevent inferred latches on unsupported/illegal encodings.
+            illegal_instr_o = 1'b0;
+            function_o = ADD;
 
             if(format_o == FORMAT_INSTR_R) begin
-                illegal_instr_o = '0;
-                function_o = ADD;
                 unique case(funct)
                     FUNCT_SLL:  function_o = SLL;
                     FUNCT_SRL:  function_o = SRL;
@@ -140,7 +141,7 @@ module opcode_decoder(
                     end
                 endcase
             end else if(format_o == FORMAT_INSTR_J) begin
-                case(opcode)
+                unique case(opcode)
                     6'h02:      function_o = J;
                     6'h03:      function_o = JAL;
                     default:    illegal_instr_o = 1'b1;

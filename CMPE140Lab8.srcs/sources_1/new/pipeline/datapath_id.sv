@@ -68,8 +68,6 @@ module datapath_id(
         logic                   is_I_type_w;
         logic                   jal_trig_w;
         logic                   jump_trig_w;
-        logic                   jr_w;
-
         logic [4:0]             i_type_dst_w;   // output of I_type_dst_mux
 
         opcode_decoder u_opcode_decoder(
@@ -125,7 +123,7 @@ module datapath_id(
         );
 
         // i_type_dst_mux output select
-        assign i_type_dst_w = is_I_type_w ? rs_w : rd_w;
+        assign i_type_dst_w = is_I_type_w ? rt_w : rd_w;
 
         // jal_dst_mux outpu select
         assign dst_o = jal_trig_w ? 5'd31 : i_type_dst_w;
@@ -136,7 +134,6 @@ module datapath_id(
         assign imm_addr_o = imm_addr_w;
         assign rs_o = rs_w;
         assign rt_o = rt_w;
-        assign jr_o = jr_w;
         assign jal_trig_o = jal_trig_w;
         assign jump_trig_o = jump_trig_w;
 

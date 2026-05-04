@@ -51,6 +51,7 @@ module MIPS(
     memory_bus_if membus_input();
     logic [31:0] memory_address_input;
     logic memory_decode_error;
+    assign memory_address_input[1:0] = 2'b00;
 
     memory_bus_if membus_ram();
     logic [7:2] memory_address_ram;
@@ -138,6 +139,7 @@ module MIPS(
         .is_branch_type_o(is_branch_type),
         .branch_target_o(bta),
         .ra_o(register_address),
+        .ex_jump_trig_o(ex_jump_trig),
         .branch_target_ex_o(),
         .alu_data_ex_o(),
         .reg_wr_data_o(),

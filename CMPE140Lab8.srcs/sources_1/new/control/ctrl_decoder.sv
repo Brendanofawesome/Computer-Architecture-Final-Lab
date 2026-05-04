@@ -168,4 +168,9 @@ module ctrl_decoder(
         endcase
     end
 
+    //ID-stage jump/type control
+    assign jump_trig_o = function_i == J;
+    assign jal_trig_o  = function_i == JAL;
+    assign is_I_type_o = format_i == FORMAT_INSTR_I;
+
 endmodule
