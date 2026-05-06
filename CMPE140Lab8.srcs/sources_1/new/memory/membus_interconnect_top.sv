@@ -35,7 +35,7 @@ module membus_interconnect_top(
     localparam int          Gpio1AddressSize = 4;
     localparam bit [31:0]   Gpio1EndAddress = Gpio1StartAddress + (1 << Gpio1AddressSize);
 
-    localparam bit [31:0]   Gpio2StartAddress = 'h90020;
+    localparam bit [31:0]   Gpio2StartAddress = 'h90010;
     localparam int          Gpio2AddressSize = 4;
     localparam bit [31:0]   Gpio2EndAddress = Gpio2StartAddress + (1 << Gpio2AddressSize);
 

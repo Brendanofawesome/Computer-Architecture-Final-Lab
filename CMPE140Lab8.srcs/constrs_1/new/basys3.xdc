@@ -1,97 +1,163 @@
 # Clock Signal
-set_property -dict {PACKAGE_PIN W5 IOSTANDARD LVCMOS33}           [get_ports {clk}];          
-create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports {clk}];
+set_property -dict {PACKAGE_PIN W5 IOSTANDARD LVCMOS33} [get_ports clk]
+create_clock -period 10.000 -name sys_clk_pin -waveform {0.000 5.000} -add [get_ports clk]
 
 # Buttons
-set_property -dict {PACKAGE_PIN U18 IOSTANDARD LVCMOS33} [get_ports {clk_b}]; # Center Button
-set_property -dict {PACKAGE_PIN U17 IOSTANDARD LVCMOS33} [get_ports {rst_b}]; # Bottom Button
+set_property -dict {PACKAGE_PIN U18 IOSTANDARD LVCMOS33} [get_ports clk_b]
+set_property -dict {PACKAGE_PIN U17 IOSTANDARD LVCMOS33} [get_ports rst_b]
 
-set_property PACKAGE_PIN T18 [get_ports buttons[0]];            # Top Button 			
-	set_property IOSTANDARD LVCMOS33 [get_ports buttons[0]];  
-set_property PACKAGE_PIN W19 [get_ports buttons[1]];            # Left Button			
-	set_property IOSTANDARD LVCMOS33 [get_ports buttons[1]];
-set_property PACKAGE_PIN T17 [get_ports buttons[2]];            # Right Button	
-	set_property IOSTANDARD LVCMOS33 [get_ports buttons[2]];
+set_property PACKAGE_PIN T18 [get_ports {buttons[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {buttons[0]}]
+set_property PACKAGE_PIN W19 [get_ports {buttons[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {buttons[1]}]
+set_property PACKAGE_PIN T17 [get_ports {buttons[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {buttons[2]}]
 
 # switchesitches
-set_property PACKAGE_PIN V17 [get_ports {switches[0]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[0]}]
-set_property PACKAGE_PIN V16 [get_ports {switches[1]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[1]}]
-set_property PACKAGE_PIN W16 [get_ports {switches[2]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[2]}]
-set_property PACKAGE_PIN W17 [get_ports {switches[3]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[3]}]
-set_property PACKAGE_PIN W15 [get_ports {switches[4]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[4]}]
-set_property PACKAGE_PIN V15 [get_ports {switches[5]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[5]}]
-set_property PACKAGE_PIN W14 [get_ports {switches[6]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[6]}]
-set_property PACKAGE_PIN W13 [get_ports {switches[7]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[7]}]
-set_property PACKAGE_PIN V2 [get_ports {switches[8]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[8]}]
-set_property PACKAGE_PIN T3 [get_ports {switches[9]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[9]}]
-set_property PACKAGE_PIN T2 [get_ports {switches[10]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[10]}]
-set_property PACKAGE_PIN R3 [get_ports {switches[11]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[11]}]
-set_property PACKAGE_PIN W2 [get_ports {switches[12]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[12]}]
-set_property PACKAGE_PIN U1 [get_ports {switches[13]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[13]}]
-set_property PACKAGE_PIN T1 [get_ports {switches[14]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[14]}]
-set_property PACKAGE_PIN R2 [get_ports {switches[15]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {switches[15]}]
+set_property PACKAGE_PIN V17 [get_ports {switches[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[0]}]
+set_property PACKAGE_PIN V16 [get_ports {switches[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[1]}]
+set_property PACKAGE_PIN W16 [get_ports {switches[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[2]}]
+set_property PACKAGE_PIN W17 [get_ports {switches[3]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[3]}]
+set_property PACKAGE_PIN W15 [get_ports {switches[4]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[4]}]
+set_property PACKAGE_PIN V15 [get_ports {switches[5]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[5]}]
+set_property PACKAGE_PIN W14 [get_ports {switches[6]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[6]}]
+set_property PACKAGE_PIN W13 [get_ports {switches[7]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[7]}]
+set_property PACKAGE_PIN V2 [get_ports {switches[8]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[8]}]
+set_property PACKAGE_PIN T3 [get_ports {switches[9]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[9]}]
+set_property PACKAGE_PIN T2 [get_ports {switches[10]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[10]}]
+set_property PACKAGE_PIN R3 [get_ports {switches[11]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[11]}]
+set_property PACKAGE_PIN W2 [get_ports {switches[12]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[12]}]
+set_property PACKAGE_PIN U1 [get_ports {switches[13]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[13]}]
+set_property PACKAGE_PIN T1 [get_ports {switches[14]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[14]}]
+set_property PACKAGE_PIN R2 [get_ports {switches[15]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switches[15]}]
 
 # LEDs
-set_property PACKAGE_PIN U16 [get_ports {LED[0]}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[0]}];
-set_property PACKAGE_PIN E19 [get_ports {LED[1]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[1]}];
-set_property PACKAGE_PIN U19 [get_ports {LED[2]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[2]}];
-set_property PACKAGE_PIN V19 [get_ports {LED[3]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[3]}];
-set_property PACKAGE_PIN W18 [get_ports {LED[4]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[4]}];
-set_property PACKAGE_PIN U15 [get_ports {LED[5]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[5]}];
-set_property PACKAGE_PIN U14 [get_ports {LED[6]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[6]}];
-set_property PACKAGE_PIN V14 [get_ports {LED[7]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[7]}];
-set_property PACKAGE_PIN V13 [get_ports {LED[8]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[8]}];
-set_property PACKAGE_PIN V3 [get_ports {LED[9]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[9]}];
-set_property PACKAGE_PIN W3 [get_ports {LED[10]}];		
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[10]}];
-set_property PACKAGE_PIN U3 [get_ports {LED[11]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[11]}];
-set_property PACKAGE_PIN P3 [get_ports {LED[12]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[12]}];
-set_property PACKAGE_PIN N3 [get_ports {LED[13]}];			
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[13]}];
-set_property PACKAGE_PIN P1 [get_ports {LED[14]}];		
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[14]}];
-set_property PACKAGE_PIN L1 [get_ports {LED[15]}];		
-	set_property IOSTANDARD LVCMOS33 [get_ports {LED[15]}];
- 
- # 7 segment display
-set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[0]}]; # CA
-set_property -dict {PACKAGE_PIN W6 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[1]}]; # CB
-set_property -dict {PACKAGE_PIN U8 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[2]}]; # CC
-set_property -dict {PACKAGE_PIN V8 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[3]}]; # CD
-set_property -dict {PACKAGE_PIN U5 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[4]}]; # CE
-set_property -dict {PACKAGE_PIN V5 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[5]}]; # CF
-set_property -dict {PACKAGE_PIN U7 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[6]}]; # CG
-set_property -dict {PACKAGE_PIN V7 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[7]}]; # DP
+set_property PACKAGE_PIN U16 [get_ports {LED[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[0]}]
+set_property PACKAGE_PIN E19 [get_ports {LED[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[1]}]
+set_property PACKAGE_PIN U19 [get_ports {LED[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[2]}]
+set_property PACKAGE_PIN V19 [get_ports {LED[3]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[3]}]
+set_property PACKAGE_PIN W18 [get_ports {LED[4]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[4]}]
+set_property PACKAGE_PIN U15 [get_ports {LED[5]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[5]}]
+set_property PACKAGE_PIN U14 [get_ports {LED[6]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[6]}]
+set_property PACKAGE_PIN V14 [get_ports {LED[7]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[7]}]
+set_property PACKAGE_PIN V13 [get_ports {LED[8]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[8]}]
+set_property PACKAGE_PIN V3 [get_ports {LED[9]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[9]}]
+set_property PACKAGE_PIN W3 [get_ports {LED[10]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[10]}]
+set_property PACKAGE_PIN U3 [get_ports {LED[11]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[11]}]
+set_property PACKAGE_PIN P3 [get_ports {LED[12]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[12]}]
+set_property PACKAGE_PIN N3 [get_ports {LED[13]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[13]}]
+set_property PACKAGE_PIN P1 [get_ports {LED[14]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[14]}]
+set_property PACKAGE_PIN L1 [get_ports {LED[15]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {LED[15]}]
 
-set_property -dict {PACKAGE_PIN U2 IOSTANDARD LVCMOS33} [get_ports {LEDSEL[0]}]; # AN0
-set_property -dict {PACKAGE_PIN U4 IOSTANDARD LVCMOS33} [get_ports {LEDSEL[1]}]; # AN1
-set_property -dict {PACKAGE_PIN V4 IOSTANDARD LVCMOS33} [get_ports {LEDSEL[2]}]; # AN2
-set_property -dict {PACKAGE_PIN W4 IOSTANDARD LVCMOS33} [get_ports {LEDSEL[3]}]; # AN3
+# 7 segment display
+set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[0]}]
+set_property -dict {PACKAGE_PIN W6 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[1]}]
+set_property -dict {PACKAGE_PIN U8 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[2]}]
+set_property -dict {PACKAGE_PIN V8 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[3]}]
+set_property -dict {PACKAGE_PIN U5 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[4]}]
+set_property -dict {PACKAGE_PIN V5 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[5]}]
+set_property -dict {PACKAGE_PIN U7 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[6]}]
+set_property -dict {PACKAGE_PIN V7 IOSTANDARD LVCMOS33} [get_ports {LEDOUT[7]}]
+
+set_property -dict {PACKAGE_PIN U2 IOSTANDARD LVCMOS33} [get_ports {LEDSEL[0]}]
+set_property -dict {PACKAGE_PIN U4 IOSTANDARD LVCMOS33} [get_ports {LEDSEL[1]}]
+set_property -dict {PACKAGE_PIN V4 IOSTANDARD LVCMOS33} [get_ports {LEDSEL[2]}]
+set_property -dict {PACKAGE_PIN W4 IOSTANDARD LVCMOS33} [get_ports {LEDSEL[3]}]
+
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][5]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][3]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][4]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][9]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][10]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][12]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][15]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][20]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][27]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][28]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][29]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][7]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][8]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][11]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][19]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][26]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][6]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][0]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][2]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][14]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][17]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][18]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][22]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][23]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][24]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][1]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][13]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][16]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][21]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/PC_q_reg[31][25]}]
+
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/u_if/instruction_format_id[0]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/u_if/instruction_format_id[1]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[0]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[1]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[2]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[3]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[4]}]
+set_property MARK_DEBUG true [get_nets {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[5]}]
+create_debug_core u_ila_0 ila
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property port_width 1 [get_debug_ports u_ila_0/clk]
+connect_debug_port u_ila_0/clk [get_nets [list clk_db_BUFG]]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
+set_property port_width 6 [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[0]} {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[1]} {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[2]} {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[3]} {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[4]} {mips_top/datapath/u_if/u_id/u_opcode_decoder/function_o__1[5]}]]
+create_debug_port u_ila_0 probe
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe1]
+set_property port_width 2 [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {mips_top/datapath/u_if/instruction_format_id[0]} {mips_top/datapath/u_if/instruction_format_id[1]}]]
+create_debug_port u_ila_0 probe
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe2]
+set_property port_width 30 [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {mips_top/datapath/PC_q_reg[31][0]} {mips_top/datapath/PC_q_reg[31][1]} {mips_top/datapath/PC_q_reg[31][2]} {mips_top/datapath/PC_q_reg[31][3]} {mips_top/datapath/PC_q_reg[31][4]} {mips_top/datapath/PC_q_reg[31][5]} {mips_top/datapath/PC_q_reg[31][6]} {mips_top/datapath/PC_q_reg[31][7]} {mips_top/datapath/PC_q_reg[31][8]} {mips_top/datapath/PC_q_reg[31][9]} {mips_top/datapath/PC_q_reg[31][10]} {mips_top/datapath/PC_q_reg[31][11]} {mips_top/datapath/PC_q_reg[31][12]} {mips_top/datapath/PC_q_reg[31][13]} {mips_top/datapath/PC_q_reg[31][14]} {mips_top/datapath/PC_q_reg[31][15]} {mips_top/datapath/PC_q_reg[31][16]} {mips_top/datapath/PC_q_reg[31][17]} {mips_top/datapath/PC_q_reg[31][18]} {mips_top/datapath/PC_q_reg[31][19]} {mips_top/datapath/PC_q_reg[31][20]} {mips_top/datapath/PC_q_reg[31][21]} {mips_top/datapath/PC_q_reg[31][22]} {mips_top/datapath/PC_q_reg[31][23]} {mips_top/datapath/PC_q_reg[31][24]} {mips_top/datapath/PC_q_reg[31][25]} {mips_top/datapath/PC_q_reg[31][26]} {mips_top/datapath/PC_q_reg[31][27]} {mips_top/datapath/PC_q_reg[31][28]} {mips_top/datapath/PC_q_reg[31][29]}]]
+set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
+set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
+set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
+connect_debug_port dbg_hub/clk [get_nets clk_db_BUFG]

@@ -1,7 +1,7 @@
 //top-level datapath wrapper
 import shared_definitions_pkg::*;
 
-module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
+module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.hex")(
     input  logic        clk,
     input  logic        rst_n,
 

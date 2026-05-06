@@ -2,9 +2,9 @@ module mips_fpga (
         input  wire         clk,
         input  wire         clk_b,
         input  wire         rst_b,
-        input        [15:0] switches,
-        input        [2:0]  buttons,
-        output       [15:0] LED,
+        inout        [15:0] switches,
+        inout        [2:0]  buttons,
+        inout        [15:0] LED,
         output wire  [3:0]  LEDSEL,
         output wire  [7:0]  LEDOUT
     );
