@@ -7,6 +7,7 @@ module datapath_if #(
     input clk,
     input rst_n,
 
+    input  logic stall_i,
     input  logic [31:2] address_i,
     output logic [31:0] instr_o
 );
@@ -29,7 +30,7 @@ module datapath_if #(
     always_ff @(posedge clk) begin
         if(!rst_n) begin
             instr_o <= '0;
-        end else begin
+        end else if (!stall_i) begin
             instr_o <= imem[address_i[IMEM_ADDR_BITS+1:2]];
         end
     end

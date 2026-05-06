@@ -75,8 +75,8 @@ module ctrl_decoder(
             NOR:    alu_op_o = ALU_NOR;
             LUI:    alu_op_o = ALU_LU;
 
-            SLT,
-            SLTU:   alu_op_o = ALU_SLT;
+            SLT:    alu_op_o = ALU_SLT;
+            SLTU:   alu_op_o = ALU_SLTU;
 
             default: alu_op_o = ALU_ADD;
         endcase
