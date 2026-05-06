@@ -28,7 +28,21 @@ module register_file (
     end
 
     // Asynchronous read
-    assign d1_o = registers[read_addr1_i];
-    assign d2_o = registers[read_addr2_i];
+    // If RAW, return the new value. Reads of $0 always return 0.
+    always_comb begin
+        if (read_addr1_i == 5'b0)
+            d1_o = 32'b0;
+        else if (write_en_i && (write_addr_i != 5'b0) && (write_addr_i == read_addr1_i))
+            d1_o = write_data_i;
+        else
+            d1_o = registers[read_addr1_i];
+
+        if (read_addr2_i == 5'b0)
+            d2_o = 32'b0;
+        else if (write_en_i && (write_addr_i != 5'b0) && (write_addr_i == read_addr2_i))
+            d2_o = write_data_i;
+        else
+            d2_o = registers[read_addr2_i];
+    end
 
 endmodule
