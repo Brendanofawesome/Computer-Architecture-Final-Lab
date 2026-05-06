@@ -95,17 +95,20 @@ module memory_controller(
 
     //while writes must be dispatched immediately, reads are fulfilled a cycle later
     //register the controls to use in the read data
+    logic       en_reg;
     logic       data_dir_reg;
     logic [1:0] data_type_reg;
     logic       sign_extend_reg;
     logic [1:0] address_reg;
     always_ff @(posedge clk) begin : mem_read_decode_register
         if(!rst_n) begin
+            en_reg <= 1'b0;
             data_dir_reg <= 1'b0;
             data_type_reg <= 2'b00;
             sign_extend_reg <= 1'b0;
             address_reg <= 2'b00;
         end else begin
+            en_reg <= en_i;
             data_dir_reg <= data_dir_i;
             data_type_reg <= data_type_i;
             sign_extend_reg <= sign_extend_i;
@@ -117,7 +120,7 @@ module memory_controller(
     always_comb begin : read_data_shift
         data_o = '0; //default
 
-        if(en_i && !data_dir_reg) begin
+        if(en_reg && !data_dir_reg) begin
             unique case(data_type_reg)
                 2'b00: begin //read byte
                     unique case(address_reg[1:0])
