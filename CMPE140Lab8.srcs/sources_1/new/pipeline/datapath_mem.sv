@@ -38,10 +38,6 @@ module datapath_mem (
             reg_dst_reg <= reg_dst_i;
             ALU_data_reg <= ALU_data_i;
             mem_to_reg_reg <= mem_to_reg;
-             mem_se_reg     <= mem_se;
-            mem_type_reg   <= mem_type;
-            mem_dir_reg    <= mem_dir;
-            mem_en_reg     <= mem_en;
         end
     end
 
@@ -77,9 +73,4 @@ module datapath_mem (
         .sel(mem_to_reg_reg),
         .y(reg_wr_data)
     );
-
-
-    //passthrough
-    assign reg_wr_en = reg_wr_en_reg;
-    assign reg_dst   = reg_dst_reg;
 endmodule
