@@ -25,10 +25,13 @@ module divmul_unit(
     );
 
     //state storage
+    logic ready_q;
     divmul_function_e current_function;
     logic latched_signed_mode;  //1=>signed
     logic [31:0] latched_d1;
     logic [31:0] latched_d2;
+
+    assign ready_o = ready_q && !start_i;
 
     always_ff @(posedge clk) begin : divmul_calc
 
@@ -37,12 +40,12 @@ module divmul_unit(
             //reset state
             hi_o <= 0;
             lo_o <= 0;
-            ready_o <= 1;
+            ready_q <= 1;
 
         //START LOGIC
         end else if (start_i) begin
             //reset control state
-            ready_o <= 0;
+            ready_q <= 0;
 
             //latch inputs
             current_function <= op_i;
@@ -51,7 +54,7 @@ module divmul_unit(
             latched_d2 <= d2_i;
 
         //CALCULATION LOGIC
-        end else if (!ready_o) begin
+        end else if (!ready_q) begin
             unique case(current_function)
                 //MULTIPLICATION
                 DIVMUL_MULT: begin
@@ -60,7 +63,7 @@ module divmul_unit(
                         else
                             {hi_o, lo_o} <= $signed(latched_d1) * $signed(latched_d2);
 
-                        ready_o <= 1;
+                        ready_q <= 1;
                     end
 
                 //DIVISION
@@ -73,7 +76,7 @@ module divmul_unit(
                             hi_o <= $signed(latched_d1) % $signed(latched_d2);
                         end
 
-                        ready_o <= 1;
+                        ready_q <= 1;
                     end
             endcase
         end

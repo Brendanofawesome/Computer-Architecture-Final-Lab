@@ -41,6 +41,7 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     datapath_if #(.IMEM_INIT_FILE(IMEM_INIT_FILE)) u_if (
         .clk(clk),
         .rst_n(rst_n),
+        .stall_i(stall_if_id),
         .address_i(pc_i),
         .instr_o(instr_if)
     );
