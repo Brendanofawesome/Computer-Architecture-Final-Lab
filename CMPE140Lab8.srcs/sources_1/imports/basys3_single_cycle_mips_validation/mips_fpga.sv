@@ -2,9 +2,9 @@ module mips_fpga (
         input  wire         clk,
         input  wire         clk_b,
         input  wire         rst_b,
-        inout        [15:0] switches,
-        inout        [2:0]  buttons,
-        inout        [15:0] LED,
+        input        [15:0] switches,
+        input        [2:0]  buttons,
+        output       [15:0] LED,
         output wire  [3:0]  LEDSEL,
         output wire  [7:0]  LEDOUT
     );
@@ -56,7 +56,7 @@ module mips_fpga (
     wire [7:0]  digit1;
     wire [7:0]  digit2;
     wire [7:0]  digit3;
-    assign {digit3, digit2, digit1, digit0} = io1_output_muxed;
+    assign {digit3, digit2, digit1, digit0} = ~io1_output_muxed;
 
     led_mux led_mux (
             .clk                (clk_5KHz),

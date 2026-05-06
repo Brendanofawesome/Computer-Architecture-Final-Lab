@@ -37,6 +37,7 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
 
     // IF-stage instruction fetch
     logic [31:0] instr_if;
+    logic stall_if_id;
 
     datapath_if #(.IMEM_INIT_FILE(IMEM_INIT_FILE)) u_if (
         .clk(clk),
@@ -75,7 +76,6 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     logic             divmul_signmode_id;
 
     logic        stall_pc;
-    logic        stall_if_id;
     logic        bubble_id_ex;
     logic        if_id_flush;
     logic        raw_stall;
