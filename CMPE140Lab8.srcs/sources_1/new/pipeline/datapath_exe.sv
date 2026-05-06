@@ -259,7 +259,7 @@ module datapath_exe (
         if(use_hilo_ex) begin
             ALU_data_ex = hilo_out;
         end else if (jal_sel_ex) begin
-            ALU_data_ex = branch_addr_ex;
+            ALU_data_ex = {branch_addr_ex, 2'b00};
         end else begin
             ALU_data_ex = alu_out;
         end

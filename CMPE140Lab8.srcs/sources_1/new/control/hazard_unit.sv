@@ -10,11 +10,13 @@ module hazard_unit (
     input  logic        id_mfrd_i,
     input  logic [4:0]  id_rs_i,
     input  logic [4:0]  id_rt_i,
+    input  logic        id_jump_trig_i,
 
     //instruction currently in EX
     input  logic        ex_reg_write_i,
     input  logic [4:0]  ex_reg_dst_i,
     input  logic        ex_mem_to_reg_i,
+    input  logic        ex_jump_trig_i,
 
     //instruction currently in MEM
     input  logic        mem_reg_write_i,
@@ -26,6 +28,7 @@ module hazard_unit (
     output logic        stall_pc_o,
     output logic        stall_if_id_o,
     output logic        bubble_id_ex_o,
+    output logic        if_id_flush_o,
     output logic        raw_stall_o,
     output logic        branch_stall_o,
     output logic        mfrd_stall_o
@@ -59,7 +62,13 @@ module hazard_unit (
 
     assign stall_any = raw_stall_o || mfrd_stall_o;
 
-    assign stall_pc_o = stall_any;
-    assign stall_if_id_o = stall_any;
-    assign bubble_id_ex_o = stall_any;
+    // PC and IF/ID hold their values when stalling
+    assign stall_pc_o    = stall_any && !ex_jump_trig_i;
+    assign stall_if_id_o = stall_any && !ex_jump_trig_i;
+
+    // EX-stage jump: flush IF/ID and ID/EX
+    // ID-stage jump (J/JAL): flush IF/ID only (PC+4 of jump)
+    // Stall: bubble ID/EX
+    assign if_id_flush_o   = ex_jump_trig_i || id_jump_trig_i;
+    assign bubble_id_ex_o  = stall_any || ex_jump_trig_i;
 endmodule

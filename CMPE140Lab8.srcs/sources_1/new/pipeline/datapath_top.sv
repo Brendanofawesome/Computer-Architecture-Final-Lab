@@ -76,6 +76,7 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     logic        stall_pc;
     logic        stall_if_id;
     logic        bubble_id_ex;
+    logic        if_id_flush;
     logic        raw_stall;
     logic        branch_stall;
     logic        mfrd_stall;
@@ -114,6 +115,7 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
         .clk(clk),
         .rst_n(rst_n),
         .stall_i(stall_if_id),
+        .flush_i(if_id_flush),
         .instr_i(instr_if),
         .pc_q(pc_i),
         .shamt_o(shamt_id),
@@ -230,15 +232,18 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
         .id_mfrd_i(mfrd_id),
         .id_rs_i(rs_id),
         .id_rt_i(rt_id),
+        .id_jump_trig_i(jump_trig_id || jal_trig_id),
         .ex_reg_write_i(reg_wr_en_ex),
         .ex_reg_dst_i(reg_dst_ex),
         .ex_mem_to_reg_i(mem_to_reg_ex),
+        .ex_jump_trig_i(ex_jump_trig_o),
         .mem_reg_write_i(reg_wr_en_mem),
         .mem_reg_dst_i(reg_dst_mem),
         .divmul_ready_i(divmul_ready_ex),
         .stall_pc_o(stall_pc),
         .stall_if_id_o(stall_if_id),
         .bubble_id_ex_o(bubble_id_ex),
+        .if_id_flush_o(if_id_flush),
         .raw_stall_o(raw_stall),
         .branch_stall_o(branch_stall),
         .mfrd_stall_o(mfrd_stall)

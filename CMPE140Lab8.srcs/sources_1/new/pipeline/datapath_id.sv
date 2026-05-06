@@ -5,6 +5,7 @@ module datapath_id(
         input logic clk,
         input logic rst_n,
         input logic stall_i,
+        input logic flush_i,
 
         //from IF
         input logic [31:0] instr_i,
@@ -51,7 +52,7 @@ module datapath_id(
 
         logic [31:0] registered_instruction;
         always_ff @( posedge clk ) begin : IF_ID_REG
-                if(!rst_n) begin
+                if(!rst_n || flush_i) begin
                         registered_instruction <= '0;
                 end else if (!stall_i) begin
                         registered_instruction <= instr_i;
