@@ -71,8 +71,9 @@ AC010004
 // [39-40]      NOPs
 00000000
 00000000
-// [41]  0xA0  J    0x28 (self)       => infinite halt loop
+// [41]  0xA0  J    0x29 (self)       => infinite halt loop
 08000028
 // [42-43]      NOPs
+00000000
 00000000
 00000000
