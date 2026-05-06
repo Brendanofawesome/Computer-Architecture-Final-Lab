@@ -4,7 +4,7 @@
 
 import shared_definitions_pkg::*; //import instruction types and functions
 
-typedef enum {
+typedef enum bit [5:0] {
     //supported opcodes
     OPCODE_J        = 6'h2,
     OPCODE_JAL      = 6'h3,
@@ -33,7 +33,7 @@ typedef enum {
     OPCODE_MFC0     = 6'h10
 } opcodes_e;
 
-typedef enum {
+typedef enum bit [5:0] {
     //supported functions
     FUNCT_SLL   = 6'h00,
     FUNCT_SRL   = 6'h02,

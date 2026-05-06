@@ -27,7 +27,7 @@
 //  by the no-hazard-detection design contract.
 // =============================================================================
 
-module tb_MIPS;
+module basic_tb;
 
     // -------------------------------------------------------------------------
     //  Parameters
@@ -66,8 +66,6 @@ module tb_MIPS;
     MIPS #(
         // Override the IMEM init file to point at our test program.
         // This parameter propagates through datapath_top -> datapath_if.
-        // If your hierarchy does not expose this parameter at the top level,
-        // use a defparam or edit IMEM_INIT_FILE in datapath_if directly.
         .IMEM_INIT_FILE("mipstest_tb.hex")
     ) dut (
         .clk        (clk),
@@ -104,7 +102,7 @@ module tb_MIPS;
     real    effective_cpi;      // elapsed_cycles / real instructions
 
     // -------------------------------------------------------------------------
-    //  Cycle counter — increments every rising edge after reset releases
+    //  Cycle counter - increments every rising edge after reset releases
     // -------------------------------------------------------------------------
     longint cycle_counter;
     always @(posedge clk) begin
@@ -213,7 +211,7 @@ module tb_MIPS;
                      effective_cpi);
         end else begin
             $display("  WARNING: halt (J-self) was never detected.");
-            $display("  Timing data unavailable — check program or SETTLE_CYCLES.");
+            $display("  Timing data unavailable - check program or SETTLE_CYCLES.");
         end
 
         // ---------------------------------------------------------------
@@ -260,7 +258,7 @@ module tb_MIPS;
         if (fail_count == 0)
             $display("  *** ALL TESTS PASSED ***");
         else
-            $display("  *** SOME TESTS FAILED — see above ***");
+            $display("  *** SOME TESTS FAILED - see above ***");
 
         $display("");
         $finish;
@@ -280,8 +278,8 @@ module tb_MIPS;
     //  Optional waveform dump
     // -------------------------------------------------------------------------
     initial begin
-        $dumpfile("tb_MIPS.vcd");
-        $dumpvars(0, tb_MIPS);
+        $dumpfile("basic_tb.vcd");
+        $dumpvars(0, basic_tb);
     end
 
 endmodule
