@@ -4,6 +4,7 @@ import shared_definitions_pkg::*;
 module datapath_id(
         input logic clk,
         input logic rst_n,
+        input logic stall_i,
 
         //from IF
         input logic [31:0] instr_i,
@@ -42,6 +43,7 @@ module datapath_id(
         output divmul_function_e div_mul_op_o,
         output logic            divmul_start_o,
         output logic            divmul_signmode_o,
+        output instruction_format_e instruction_format_o,
 
         //output wires to ID-EX reg from jal_dst_mux
         output logic [4:0] dst_o
@@ -51,7 +53,7 @@ module datapath_id(
         always_ff @( posedge clk ) begin : IF_ID_REG
                 if(!rst_n) begin
                         registered_instruction <= '0;
-                end else begin
+                end else if (!stall_i) begin
                         registered_instruction <= instr_i;
                 end
         end
@@ -144,4 +146,6 @@ module datapath_id(
 
         // illegal instruction
         assign decode_err_o = illegal_instr_w;
+
+        assign instruction_format_o = format_w;
 endmodule

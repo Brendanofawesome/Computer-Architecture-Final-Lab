@@ -1,4 +1,4 @@
-// Top-level datapath wrapper
+//top-level datapath wrapper
 import shared_definitions_pkg::*;
 
 module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
@@ -26,7 +26,13 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     output logic [31:2] mem_address_o,
     output logic        reg_wr_en_o,
     output logic [4:0]  reg_dst_o,
-    output logic [31:0] reg_d2_o
+    output logic [31:0] reg_d2_o,
+    output logic        stall_pc_o,
+    output logic        stall_if_id_o,
+    output logic        bubble_id_ex_o,
+    output logic        raw_stall_o,
+    output logic        branch_stall_o,
+    output logic        mfrd_stall_o
 );
 
     // IF-stage instruction fetch
@@ -67,9 +73,47 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     logic             divmul_start_id;
     logic             divmul_signmode_id;
 
+    logic        stall_pc;
+    logic        stall_if_id;
+    logic        bubble_id_ex;
+    logic        raw_stall;
+    logic        branch_stall;
+    logic        mfrd_stall;
+    logic        divmul_ready_ex;
+    logic        id_uses_rs;
+    logic        id_uses_rt;
+
+    //determine the registers read by ID instruction
+    instruction_format_e instruction_format_id;
+    always_comb begin
+        unique case (instruction_format_id)
+            FORMAT_INSTR_R: begin
+                id_uses_rs = 1'b1;
+                id_uses_rt = !jr_id;
+            end
+
+            FORMAT_INSTR_I: begin
+                id_uses_rs = 1'b1;
+                id_uses_rt = mem_dir_id || branch_id;
+            end
+
+
+            FORMAT_INSTR_J: begin
+                id_uses_rs = 1'b0;
+                id_uses_rt = 1'b0;
+            end
+
+            default: begin
+                id_uses_rs = 1'b0;
+                id_uses_rt = 1'b0;
+            end
+        endcase
+    end
+
     datapath_id u_id (
         .clk(clk),
         .rst_n(rst_n),
+        .stall_i(stall_if_id),
         .instr_i(instr_if),
         .pc_q(pc_i),
         .shamt_o(shamt_id),
@@ -98,13 +142,12 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
         .div_mul_op_o(divmul_op_id),
         .divmul_start_o(divmul_start_id),
         .divmul_signmode_o(divmul_signmode_id),
-        .dst_o(dst_id)
+        .dst_o(dst_id),
+        .instruction_format_o(instruction_format_id)
     );
 
     assign jump_address_o = imm_addr_id;
-    assign id_jump_trig_o = jump_trig_id | jal_trig_id;
-
-    // Map ID controls to EX controls used by datapath_exe
+    assign id_jump_trig_o = jump_trig_id || jal_trig_id;
 
     // EX-stage outputs
     logic [31:0] alu_data_ex;
@@ -131,6 +174,7 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     datapath_exe u_exe (
         .clk(clk),
         .rst_n(rst_n),
+        .bubble_i(bubble_id_ex),
         .ALU_op_id(alu_op_id),
         .shamt_id(shamt_id),
         .imm_id(imm_id),
@@ -150,6 +194,9 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
         .reg_wb_data(data_wb),
         .reg_wb_addr(reg_dst_wb),
         .reg_wb_en(reg_wr_en_wb),
+        .forward_mem_data_i(reg_wr_data_mem),
+        .forward_mem_addr_i(reg_dst_mem),
+        .forward_mem_en_i(reg_wr_en_mem),
         .divmul_op_id(divmul_op_id),
         .divmul_signed_mode_id(divmul_signmode_id),
         .divmul_start_id(divmul_start_id),
@@ -163,7 +210,7 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
         .ra_ex(ra_ex),
         .is_branch_type_ex(is_branch_type_ex),
         .ex_jump_trig(ex_jump_trig_o),
-        .mul_done_ex(),
+        .mul_done_ex(divmul_ready_ex),
         .reg_dst_ex(reg_dst_ex),
         .reg_wr_en_ex(reg_wr_en_ex),
         .reg_d2_ex(reg_d2_ex),
@@ -172,6 +219,29 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
         .mem_type_ex(mem_type_ex),
         .mem_se_ex(mem_se_ex),
         .mem_to_reg_ex(mem_to_reg_ex)
+    );
+
+
+    hazard_unit u_hazard_unit (
+        .id_uses_rs_i(id_uses_rs),
+        .id_uses_rt_i(id_uses_rt),
+        .id_branch_i(branch_id),
+        .id_jr_i(jr_id),
+        .id_mfrd_i(mfrd_id),
+        .id_rs_i(rs_id),
+        .id_rt_i(rt_id),
+        .ex_reg_write_i(reg_wr_en_ex),
+        .ex_reg_dst_i(reg_dst_ex),
+        .ex_mem_to_reg_i(mem_to_reg_ex),
+        .mem_reg_write_i(reg_wr_en_mem),
+        .mem_reg_dst_i(reg_dst_mem),
+        .divmul_ready_i(divmul_ready_ex),
+        .stall_pc_o(stall_pc),
+        .stall_if_id_o(stall_if_id),
+        .bubble_id_ex_o(bubble_id_ex),
+        .raw_stall_o(raw_stall),
+        .branch_stall_o(branch_stall),
+        .mfrd_stall_o(mfrd_stall)
     );
 
     datapath_mem u_mem (
@@ -215,5 +285,10 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     assign is_branch_type_o = is_branch_type_ex;
     assign reg_wr_data_o = data_wb;
 
+    assign stall_pc_o = stall_pc;
+    assign stall_if_id_o = stall_if_id;
+    assign bubble_id_ex_o = bubble_id_ex;
+    assign raw_stall_o = raw_stall;
+    assign branch_stall_o = branch_stall;
+    assign mfrd_stall_o = mfrd_stall;
 endmodule
-

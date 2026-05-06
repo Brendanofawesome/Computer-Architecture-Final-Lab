@@ -3,6 +3,7 @@ import shared_definitions_pkg::*;
 module datapath_exe (
     input  logic        clk,
     input  logic        rst_n,
+    input  logic        bubble_i,
 
     //from ID
     input  alu_opcodes_e ALU_op_id,
@@ -24,6 +25,9 @@ module datapath_exe (
     input  logic [31:0] reg_wb_data,
     input  logic [4:0]  reg_wb_addr,
     input  logic        reg_wb_en,
+    input  logic [31:0] forward_mem_data_i,
+    input  logic [4:0]  forward_mem_addr_i,
+    input  logic        forward_mem_en_i,
     input  divmul_function_e divmul_op_id,
     input  logic        divmul_signed_mode_id,
     input  logic        divmul_start_id,
@@ -112,6 +116,31 @@ module datapath_exe (
             mem_type_ex_i <= 2'b10;
             mem_se_ex_i <= 1'b0;
             mem_to_reg_ex_i <= 1'b0;
+        end else if (bubble_i) begin
+            jal_sel_ex <= 1'b0;
+            shamt_ex <= '0;
+            rs_addr_ex <= '0;
+            rt_addr_ex <= '0;
+            reg_dst_ex <= '0;
+            imm_ex <= '0;
+            imm_zero_ext_ex <= 1'b0;
+            d2_sel_ex <= 1'b0;
+            hi_lo_sel_ex <= 1'b0;
+            use_hilo_ex <= 1'b0;
+            branch_inv_ex <= 1'b0;
+            reg_wr_en_ex <= 1'b0;
+            jr_ex <= 1'b0;
+            branch_ex <= 1'b0;
+            branch_addr_ex <= '0;
+            ALU_op_ex <= shared_definitions_pkg::ALU_ADD;
+            divmul_op_ex <= shared_definitions_pkg::DIVMUL_MULT;
+            divmul_signed_mode_ex <= 1'b0;
+            divmul_start_ex <= 1'b0;
+            mem_en_ex_i <= 1'b0;
+            mem_dir_ex_i <= 1'b0;
+            mem_type_ex_i <= 2'b10;
+            mem_se_ex_i <= 1'b0;
+            mem_to_reg_ex_i <= 1'b0;
         end else begin
             jal_sel_ex <= jal_id;
             shamt_ex <= shamt_id;
@@ -142,6 +171,8 @@ module datapath_exe (
 
 
         // Unregistered Signals
+    logic [31:0] rs_data_raw;
+    logic [31:0] rt_data_raw;
     logic [31:0] rs_data;
     logic [31:0] rt_data;
 
@@ -157,6 +188,29 @@ module datapath_exe (
     logic        alu_zero;
 
     logic        branch_success;
+
+    // Forwarding priority:
+    //   1. MEM stage result (newer than WB)
+    //   2. WB stage result
+    //   3. Register file value
+    // This feeds ALU operands, branch/JR operands, div/mul operands, and store data.
+    always_comb begin : FORWARD_RS
+        rs_data = rs_data_raw;
+        if (forward_mem_en_i && (forward_mem_addr_i != 5'd0) && (forward_mem_addr_i == rs_addr_ex)) begin
+            rs_data = forward_mem_data_i;
+        end else if (reg_wb_en && (reg_wb_addr != 5'd0) && (reg_wb_addr == rs_addr_ex)) begin
+            rs_data = reg_wb_data;
+        end
+    end
+
+    always_comb begin : FORWARD_RT
+        rt_data = rt_data_raw;
+        if (forward_mem_en_i && (forward_mem_addr_i != 5'd0) && (forward_mem_addr_i == rt_addr_ex)) begin
+            rt_data = forward_mem_data_i;
+        end else if (reg_wb_en && (reg_wb_addr != 5'd0) && (reg_wb_addr == rt_addr_ex)) begin
+            rt_data = reg_wb_data;
+        end
+    end
 
     assign imm_se = imm_zero_ext_ex ? {16'b0, imm_ex} : {{16{imm_ex[15]}}, imm_ex};
     assign ra_ex = rs_data;
@@ -219,8 +273,8 @@ module datapath_exe (
                 .write_data_i(reg_wb_data),
                 .write_addr_i(reg_wb_addr),
                 .write_en_i(reg_wb_en),
-                            .d1_o(rs_data),
-                            .d2_o(rt_data)
+                            .d1_o(rs_data_raw),
+                            .d2_o(rt_data_raw)
         );
 
     // --- Branch Logic --- //

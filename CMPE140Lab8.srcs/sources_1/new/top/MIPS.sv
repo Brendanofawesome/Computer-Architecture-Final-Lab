@@ -18,10 +18,11 @@ module MIPS #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
 
     logic [31:2] PC_q, PC_d; // PC word-address register
     logic [31:0] nPC_d_full;
+    logic        stall_pc;
     always @( posedge clk ) begin : PC_reg
         if(!rst_n)
             PC_q <= '0;
-        else
+        else if (!stall_pc)
             PC_q <= PC_d;
     end
 
@@ -146,6 +147,12 @@ module MIPS #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
         .mem_address_o(memory_address_input),
         .reg_wr_en_o(),
         .reg_dst_o(),
-        .reg_d2_o()
+        .reg_d2_o(),
+        .stall_pc_o(stall_pc),
+        .stall_if_id_o(),
+        .bubble_id_ex_o(),
+        .raw_stall_o(),
+        .branch_stall_o(),
+        .mfrd_stall_o()
     );
 endmodule
