@@ -135,6 +135,12 @@ module ctrl_decoder(
 
     //memory control
     always_comb begin : MEM_CTRL
+        mem_en_o    = 0;
+        mem_dir_o   = 0;
+        mem_type_o  = 2'b10; //word
+        mem_se_o    = 0;
+        mem_to_reg_o = 0;
+
         unique case (function_i)
             LB:  begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b00; mem_se_o = 1; mem_to_reg_o = 1; end
             LBU: begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b00; mem_se_o = 0; mem_to_reg_o = 1; end
@@ -144,13 +150,7 @@ module ctrl_decoder(
             SB:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b00; end
             SH:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b01; end
             SW:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b10; end
-            default: begin
-                mem_en_o    = 0;
-                mem_dir_o   = 0;
-                mem_type_o  = 2'b10; //word
-                mem_se_o    = 0;
-                mem_to_reg_o = 0;;
-            end
+            default: ;
         endcase
     end
 
@@ -159,6 +159,7 @@ module ctrl_decoder(
         case (function_i)
             //write to register
             ADD, ADDU,
+            SUB, SUBU,
             AND, OR, XOR, NOR,
             SLL, SRL, SRA,
             SLT, SLTU,
