@@ -327,9 +327,9 @@
     </FileSet>
     <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1" RelGenDir="$PGENDIR/sim_1">
       <Filter Type="Srcs"/>
-      <File Path="$PSRCDIR/sim_1/imports/MARS/mipstest.hex">
+      <File Path="$PSRCDIR/sim_1/imports/MARS/mipstest.bin">
         <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../Downloads/MARS/mipstest.hex"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../Downloads/MARS/mipstest.bin"/>
           <Attr Name="ImportTime" Val="1777919481"/>
         </FileInfo>
       </File>
