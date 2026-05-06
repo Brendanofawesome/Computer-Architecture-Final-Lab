@@ -9,7 +9,9 @@ module MIPS #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
 
     output [31:0]   io2_output,
     input  [31:0]   io2_input,
-    output [31:0]   oe2
+    output [31:0]   oe2,
+
+    output [31:0]   pc_o
     );
 
     ////////////////
@@ -21,10 +23,12 @@ module MIPS #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     logic        stall_pc;
     always @( posedge clk ) begin : PC_reg
         if(!rst_n)
-            PC_q <= '0;
+            PC_q <= '1;
         else if (!stall_pc)
             PC_q <= PC_d;
     end
+
+    assign pc_o = {PC_q, 2'b00};
 
     logic [25:0] imm_jump_addr;
     logic id_jump_trig;

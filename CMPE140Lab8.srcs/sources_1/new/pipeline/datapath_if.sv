@@ -26,12 +26,5 @@ module datapath_if #(
         $readmemh(IMEM_INIT_FILE, imem);
     end
 
-    // PC is stored as a word address.
-    always_ff @(posedge clk) begin
-        if(!rst_n) begin
-            instr_o <= '0;
-        end else if (!stall_i) begin
-            instr_o <= imem[address_i[IMEM_ADDR_BITS+1:2]];
-        end
-    end
+    assign instr_o = imem[address_i[IMEM_ADDR_BITS+1:2]];
 endmodule
