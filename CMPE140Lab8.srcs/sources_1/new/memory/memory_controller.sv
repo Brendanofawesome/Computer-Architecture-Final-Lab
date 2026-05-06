@@ -1,4 +1,7 @@
 module memory_controller(
+    input logic clk,
+    input logic rst_n,
+
     input logic [31:0] address_i,
     input logic [31:0] data_i,
 
@@ -15,6 +18,10 @@ module memory_controller(
     //passthrough to the interconnect
     assign address_o = address_i[31:2];
     assign membus_o.select = en_i;
+
+    ///////////////////
+    // MEMORY WRITES //
+    ///////////////////
 
     //assign the write enable strobe bits
     always_comb begin : write_en_strobe
@@ -82,34 +89,58 @@ module memory_controller(
         end
     end
 
+    //////////////////
+    // MEMORY READS //
+    //////////////////
+
+    //while writes must be dispatched immediately, reads are fulfilled a cycle later
+    //register the controls to use in the read data
+    logic       data_dir_reg;
+    logic [1:0] data_type_reg;
+    logic       sign_extend_reg;
+    logic [1:0] address_reg;
+    always_ff @(posedge clk) begin : mem_read_decode_register
+        if(!rst_n) begin
+            data_dir_reg <= 1'b0;
+            data_type_reg <= 2'b00;
+            sign_extend_reg <= 1'b0;
+            address_reg <= 2'b00;
+        end else begin
+            data_dir_reg <= data_dir_i;
+            data_type_reg <= data_type_i;
+            sign_extend_reg <= sign_extend_i;
+            address_reg <= address_i[1:0];
+        end
+    end
+
     //assign the memory read data
     always_comb begin : read_data_shift
         data_o = '0; //default
 
-        if(en_i && !data_dir_i) begin
-            unique case(data_type_i)
+        if(en_i && !data_dir_reg) begin
+            unique case(data_type_reg)
                 2'b00: begin //read byte
-                    unique case(address_i[1:0])
+                    unique case(address_reg[1:0])
                         2'b00: begin
-                            data_o = sign_extend_i
+                            data_o = sign_extend_reg
                                 ? {{24{membus_o.data_out[7]}}, membus_o.data_out[7:0]}
                                 : {24'b0, membus_o.data_out[7:0]};
                         end
 
                         2'b01: begin
-                            data_o = sign_extend_i
+                            data_o = sign_extend_reg
                                 ? {{24{membus_o.data_out[15]}}, membus_o.data_out[15:8]}
                                 : {24'b0, membus_o.data_out[15:8]};
                         end
 
                         2'b10: begin
-                            data_o = sign_extend_i
+                            data_o = sign_extend_reg
                                 ? {{24{membus_o.data_out[23]}}, membus_o.data_out[23:16]}
                                 : {24'b0, membus_o.data_out[23:16]};
                         end
 
                         2'b11: begin
-                            data_o = sign_extend_i
+                            data_o = sign_extend_reg
                                 ? {{24{membus_o.data_out[31]}}, membus_o.data_out[31:24]}
                                 : {24'b0, membus_o.data_out[31:24]};
                         end
@@ -117,15 +148,15 @@ module memory_controller(
                 end
 
                 2'b01: begin //read halfword
-                    unique case(address_i[1])
+                    unique case(address_reg[1])
                         1'b0: begin
-                            data_o = sign_extend_i
+                            data_o = sign_extend_reg
                                 ? {{16{membus_o.data_out[15]}}, membus_o.data_out[15:0]}
                                 : {16'b0, membus_o.data_out[15:0]};
                         end
 
                         1'b1: begin
-                            data_o = sign_extend_i
+                            data_o = sign_extend_reg
                                 ? {{16{membus_o.data_out[31]}}, membus_o.data_out[31:16]}
                                 : {16'b0, membus_o.data_out[31:16]};
                         end

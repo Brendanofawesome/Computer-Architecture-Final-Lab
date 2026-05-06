@@ -64,6 +64,8 @@ module ctrl_decoder(
             SH,
             SW:     alu_op_o = ALU_ADD;
 
+            BNE,
+            BEQ,
             SUB,
             SUBU: alu_op_o = ALU_SUB;
 
@@ -133,13 +135,7 @@ module ctrl_decoder(
 
     //memory control
     always_comb begin : MEM_CTRL
-        mem_en_o    = 0;
-        mem_dir_o   = 0;
-        mem_type_o  = 2'b10; //word
-        mem_se_o    = 0;
-        mem_to_reg_o = 0;
-
-        case (function_i)
+        unique case (function_i)
             LB:  begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b00; mem_se_o = 1; mem_to_reg_o = 1; end
             LBU: begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b00; mem_se_o = 0; mem_to_reg_o = 1; end
             LH:  begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b01; mem_se_o = 1; mem_to_reg_o = 1; end
@@ -148,7 +144,13 @@ module ctrl_decoder(
             SB:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b00; end
             SH:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b01; end
             SW:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b10; end
-            default: ;
+            default: begin
+                mem_en_o    = 0;
+                mem_dir_o   = 0;
+                mem_type_o  = 2'b10; //word
+                mem_se_o    = 0;
+                mem_to_reg_o = 0;;
+            end
         endcase
     end
 
@@ -165,7 +167,7 @@ module ctrl_decoder(
             MFHI, MFLO,
             JAL:    reg_write_en_o = 1;
 
-            //everything else 
+            //everything else
             default: reg_write_en_o = 0;
         endcase
     end

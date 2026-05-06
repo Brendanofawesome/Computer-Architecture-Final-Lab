@@ -51,29 +51,34 @@ module datapath_exe (
 );
 
         // --- EX-stage pipeline registers for control and data --- //
-    // pre-registered (ID stage) signals
-    logic [31:0] rs_data;
-    logic [31:0] rt_data;
-    logic [31:0] imm_se;
     // EX-stage registered signals (suffixed _ex)
-    logic [31:0] rs_data_ex;
-    logic [31:0] rt_data_ex;
-    logic [31:0] imm_se_ex;
-    logic [31:0] alu_src2_ex;
+
+    //ALU control
     alu_opcodes_e ALU_op_ex;
+    logic [4:0]  shamt_ex;
+
+    //divmul control
     divmul_function_e divmul_op_ex;
     logic        divmul_signed_mode_ex;
     logic        divmul_start_ex;
-    logic [4:0]  shamt_ex;
-    logic [4:0]  rs_addr_ex;
-    logic [4:0]  rt_addr_ex;
-    logic        d2_sel_ex;
+
     logic        hi_lo_sel_ex;
     logic        use_hilo_ex;
+
+    //data input
+    logic [4:0]  rs_addr_ex;
+    logic [4:0]  rt_addr_ex;
+    logic [15:0] imm_ex;
+    logic        imm_zero_ext_ex;
+    logic        d2_sel_ex;
+
+    //branch control
     logic        branch_inv_ex;
     logic        jr_ex;
     logic        branch_ex;
     logic [31:2] branch_addr_ex;
+
+    //memory control passthrough
     logic        mem_en_ex_i;
     logic        mem_dir_ex_i;
     logic [1:0]  mem_type_ex_i;
@@ -81,12 +86,11 @@ module datapath_exe (
     logic        mem_to_reg_ex_i;
     always_ff @(posedge clk or negedge rst_n) begin : ID_EX_REG
         if (!rst_n) begin
-            rs_data_ex <= '0;
-            rt_data_ex <= '0;
-            imm_se_ex <= '0;
             shamt_ex <= '0;
             rs_addr_ex <= '0;
             rt_addr_ex <= '0;
+            imm_ex <= '0;
+            imm_zero_ext_ex <= '0;
             reg_dst_ex <= '0;
             d2_sel_ex <= 1'b0;
             hi_lo_sel_ex <= 1'b0;
@@ -106,13 +110,12 @@ module datapath_exe (
             mem_se_ex_i <= 1'b0;
             mem_to_reg_ex_i <= 1'b0;
         end else begin
-            rs_data_ex <= rs_data;
-            rt_data_ex <= rt_data;
-            imm_se_ex <= imm_se;
             shamt_ex <= shamt_id;
             rs_addr_ex <= rs_addr_id;
             rt_addr_ex <= rt_addr_id;
             reg_dst_ex <= reg_dst_id;
+            imm_ex <= imm_id;
+            imm_zero_ext_ex <= imm_zero_ext_id;
             d2_sel_ex <= d2_sel_id;
             hi_lo_sel_ex <= mfsel_id;
             use_hilo_ex <= mfrd_id;
@@ -134,33 +137,41 @@ module datapath_exe (
     end
 
 
-    // (pre-registered signals declared above)
-  logic [31:0] divmul_hi;
-  logic [31:0] divmul_lo;
-  logic [31:0] hilo_out;
-  logic [31:0] alu_out;
-  logic        alu_zero;
-  logic        branch_success;
-  logic        divmul_ready_o;
+        // Unregistered Signals
+    logic [31:0] rs_data;
+    logic [31:0] rt_data;
 
-    assign imm_se = imm_zero_ext_id ? {16'b0, imm_id} : {{16{imm_id[15]}}, imm_id};
-    assign ra_ex = rs_data_ex;
+    logic [31:0] imm_se;
+
+    logic [31:0] divmul_hi_q;
+    logic [31:0] divmul_lo_q;
+    logic [31:0] hilo_out;
+    logic        divmul_ready_o;
+
+    logic [31:0] alu_src2;
+    logic [31:0] alu_out;
+    logic        alu_zero;
+
+    logic        branch_success;
+
+    assign imm_se = imm_zero_ext_ex ? {16'b0, imm_id} : {{16{imm_id[15]}}, imm_id};
+    assign ra_ex = rs_data;
     assign bta_ex = branch_addr_ex;
     assign is_branch_type_ex = branch_ex;
 
   // --- ALU Logic --- //
   mux2to1 #(32) alu_d2_mux (
-      .a(rt_data_ex),
-      .b(imm_se_ex),
+      .a(rt_data),
+      .b(imm_se),
       .sel(d2_sel_ex),
-      .y(alu_src2_ex)
+      .y(alu_src2)
   );
 
   ALU alu (
       .opcode_i(ALU_op_ex),
       .shamt_i(shamt_ex),
-      .data1_i(rs_data_ex),
-      .data2_i(alu_src2_ex),
+      .data1_i(rs_data),
+      .data2_i(alu_src2),
       .data_o(alu_out),
       .zero_o(alu_zero)
   );
@@ -172,16 +183,16 @@ module datapath_exe (
       .op_i(divmul_op_ex),
       .signed_mode_i(divmul_signed_mode_ex),
       .start_i(divmul_start_ex),
-      .d1_i(rs_data_ex),
-      .d2_i(rt_data_ex),
+      .d1_i(rs_data),
+      .d2_i(rt_data),
       .ready_o(divmul_ready_o),
-      .hi_o(divmul_hi),
-      .lo_o(divmul_lo)
+      .hi_o(divmul_hi_q),
+      .lo_o(divmul_lo_q)
   );
 
   mux2to1 #(32) HI_LO_sel (
-      .a(divmul_hi),
-      .b(divmul_lo),
+      .a(divmul_hi_q),
+      .b(divmul_lo_q),
       .sel(hi_lo_sel_ex),
       .y(hilo_out)
   );
@@ -222,7 +233,7 @@ module datapath_exe (
 
     // expose registered write-back control and RT data for next stage (module outputs)
     assign mul_done_ex = divmul_ready_o;
-    assign reg_d2_ex = rt_data_ex;
+    assign reg_d2_ex = rt_data;
 
     // reg_dst_ex and reg_wr_en_ex are already internal registers with matching output names
     assign mem_en_ex = mem_en_ex_i;

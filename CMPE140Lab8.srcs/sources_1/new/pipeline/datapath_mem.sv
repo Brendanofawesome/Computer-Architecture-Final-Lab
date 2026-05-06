@@ -22,37 +22,28 @@ module datapath_mem (
     output logic [31:2] mem_address_o
 );
 
-    //register control signals
-    logic         reg_wr_en_mem;
-    logic [4:0]   reg_dst_mem;
-    logic [31:0]  ALU_data_mem;
-    logic [31:0]  reg_d2_mem;
-    logic         mem_se_mem;
-    logic [1:0]   mem_type_mem;
-    logic         mem_dir_mem;
-    logic         mem_en_mem;
-    logic         mem_to_reg_mem;
+    //register passthrough signals
+    logic           reg_wr_en_reg;
+    logic [4:0]     reg_dst_reg;
+    logic [31:0]    ALU_data_reg;
+    logic [31:0]    reg_d2_reg;
+    logic           mem_to_reg_reg;
 
+    //Note that some signals are already registered by the memory units
+    // => passthrough directly to avoid extra cycle latency
     always_ff @( posedge clk ) begin : EX_MEM_REG
         if (!rst_n) begin
             reg_wr_en_mem <= 1'b0;
             reg_dst_mem <= '0;
             ALU_data_mem <= '0;
             reg_d2_mem <= '0;
-            mem_se_mem <= 1'b0;
             mem_type_mem <= 1'b0;
-            mem_dir_mem <= 1'b0;
-            mem_en_mem <= 1'b0;
             mem_to_reg_mem <= 1'b0;
         end else begin
             reg_wr_en_mem <= reg_wr_en_i;
             reg_dst_mem <= reg_dst_i;
             ALU_data_mem <= ALU_data_i;
             reg_d2_mem <= reg_d2;
-            mem_se_mem <= mem_se;
-            mem_type_mem <= mem_type;
-            mem_dir_mem <= mem_dir;
-            mem_en_mem <= mem_en;
             mem_to_reg_mem <= mem_to_reg;
         end
     end
@@ -60,6 +51,9 @@ module datapath_mem (
     logic [31:0] mem_data_o;
 
     memory_controller mem_controller(
+        .clk(clk),
+        .rst_n(rst_n),
+
         .address_i (ALU_data_mem),
         .data_i (reg_d2_mem),
 
@@ -83,5 +77,5 @@ module datapath_mem (
 
     //passthrough
     assign reg_wr_en = reg_wr_en_mem;
-    assign reg_dst    = reg_dst_mem;
+    assign reg_dst   = reg_dst_mem;
 endmodule
