@@ -1,6 +1,6 @@
 //top level MIPS processor!
 
-module MIPS(
+module MIPS #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     input clk, rst_n,
 
     output [31:0]   io1_output,
@@ -123,7 +123,7 @@ module MIPS(
     //////////////
     // Datapath //
     //////////////
-    datapath_top datapath(
+    datapath_top #(.IMEM_INIT_FILE(IMEM_INIT_FILE)) datapath(
         .clk(clk),
         .rst_n(rst_n),
 

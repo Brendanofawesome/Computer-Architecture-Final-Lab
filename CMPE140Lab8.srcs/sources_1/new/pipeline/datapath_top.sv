@@ -1,7 +1,7 @@
 // Top-level datapath wrapper
 import shared_definitions_pkg::*;
 
-module datapath_top(
+module datapath_top #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     input  logic        clk,
     input  logic        rst_n,
 
@@ -32,7 +32,7 @@ module datapath_top(
     // IF-stage instruction fetch
     logic [31:0] instr_if;
 
-    datapath_if u_if (
+    datapath_if #(.IMEM_INIT_FILE(IMEM_INIT_FILE)) u_if (
         .clk(clk),
         .rst_n(rst_n),
         .address_i(pc_i),
