@@ -66,6 +66,9 @@ module MIPS #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     logic [3:2] memory_address_gpio2;
 
     membus_interconnect_top peripherals(
+        .clk(clk),
+        .rst_n(rst_n),
+
         .address(memory_address_input),
         .input_bus(membus_input),
 

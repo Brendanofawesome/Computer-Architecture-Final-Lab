@@ -1,6 +1,9 @@
 //performs memory bus routing by decoding address to dispatch writes and multiplex reads
 
 module membus_interconnect_top(
+    input clk,
+    input rst_n,
+
     input logic [31:2] address,
     memory_bus_if.Peripheral input_bus,
 
@@ -96,11 +99,21 @@ module membus_interconnect_top(
     end
 
     // multiplex reads
+    // register peripheral selection for one cycle to delay read mux
+    peripherals_e current_peripheral_reg;
+    always_ff @(posedge clk) begin
+        if(!rst_n) begin
+            current_peripheral_reg <= NONE;
+        end else begin
+            current_peripheral_reg <= current_peripheral;
+        end
+    end
+
     always_comb begin : read_mux
         input_bus.data_out = '0;
 
-        if(input_bus.select && !decode_error) begin
-            unique case(current_peripheral)
+        if(!decode_error && current_peripheral_reg != NONE) begin
+            unique case(current_peripheral_reg)
                 MEMORY: input_bus.data_out = ram_bus.data_out;
                 GPIO1:  input_bus.data_out = gpio1_bus.data_out;
                 GPIO2:  input_bus.data_out = gpio2_bus.data_out;

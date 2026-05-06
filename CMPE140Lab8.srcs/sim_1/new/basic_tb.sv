@@ -233,8 +233,8 @@ module basic_tb;
         $display("");
         $display("--- Checking memory results ---");
 
-        check("LW:   $9 = 5 (from mem[0])", `REGFILE[9], 32'd5);
-        check("SW:   RAM[0] = 5",           `RAM[0],     32'd5);
+        check("SW:   RAM[0x4] = 5",           `RAM[1],     32'd5);
+        check("LW:   $9 = 5 (from RAM[0x4])", `REGFILE[9], 32'd5);
 
         $display("");
         $display("--- Checking branch results ---");

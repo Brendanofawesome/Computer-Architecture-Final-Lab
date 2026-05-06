@@ -40,13 +40,13 @@
 // [20-21]      NOPs
 00000000
 00000000
-// [22]  0x58  SW   $1,  0($0)        => mem[0x00000] = 5
-AC010000
+// [22]  0x58  SW   $1,  4($0)        => mem[0x00004] = 5
+AC010004
 // [23-24]      NOPs
 00000000
 00000000
-// [25]  0x64  LW   $9,  0($0)        => $9  = 5
-8C090000
+// [25]  0x64  LW   $9,  4($0)        => $9  = 5
+8C090004
 // [26-27]      NOPs
 00000000
 00000000
@@ -55,23 +55,24 @@ AC010000
 // [29-30]      NOPs
 00000000
 00000000
-// [31]  0x7C  BEQ  $3,  $3,  +3     => taken (skips words 34-36)
-10630003
-// [32-33]      NOPs (2-cycle branch delay)
+// [31]  0x7C  BEQ  $3,  $3,  +3     => taken (skips words 34-37)
+10630004
+// [32-34]      NOPs (2-cycle branch delay)
 00000000
 00000000
-// [34]  0x88  ADDI $11, $0,  99      => $11 = 99  *** SHOULD BE SKIPPED ***
+00000000
+// [35]  0x88  ADDI $11, $0,  99      => $11 = 99  *** SHOULD BE SKIPPED ***
 200B0063
-// [35-36]      NOPs (also skipped)
+// [36-37]      NOPs (also skipped)
 00000000
 00000000
-// [37]  0x94  ADDI $12, $0,  42      => $12 = 42  (branch landing pad)
+// [38]  0x94  ADDI $12, $0,  42      => $12 = 42  (branch landing pad)
 200C002A
-// [38-39]      NOPs
+// [39-40]      NOPs
 00000000
 00000000
-// [40]  0xA0  J    0x28 (self)       => infinite halt loop
+// [41]  0xA0  J    0x28 (self)       => infinite halt loop
 08000028
-// [41-42]      NOPs
+// [42-43]      NOPs
 00000000
 00000000
