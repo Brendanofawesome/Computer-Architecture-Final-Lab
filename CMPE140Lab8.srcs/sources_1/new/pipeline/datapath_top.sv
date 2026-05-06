@@ -33,6 +33,8 @@ module datapath_top(
     logic [31:0] instr_if;
 
     datapath_if u_if (
+        .clk(clk),
+        .rst_n(rst_n),
         .address_i(pc_i),
         .instr_o(instr_if)
     );
@@ -75,7 +77,7 @@ module datapath_top(
         .rs_o(rs_id),
         .rt_o(rt_id),
         .imm_addr_o(imm_addr_id),
-        .b_adder_o(bta_id),
+        .branch_address_o(bta_id),
         .mfsel_o(mfsel_id),
         .mfrd_o(mfrd_id),
         .branch_inv_o(branch_inv_id),
@@ -141,6 +143,7 @@ module datapath_top(
         .reg_dst_id(dst_id),
         .branch_inv_id(branch_inv_id),
         .reg_wr_en_id(reg_write_en_id),
+        .jal_id(jal_trig_id),
         .jr_id(jr_id),
         .branch_id(branch_id),
         .b_addr_id(bta_id),

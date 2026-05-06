@@ -17,7 +17,7 @@ module MIPS(
     ////////////////
 
     logic [31:2] PC_q, PC_d; // PC word-address register
-    logic [31:0] PC_d_full;
+    logic [31:0] nPC_d_full;
     always @( posedge clk ) begin : PC_reg
         if(!rst_n)
             PC_q <= '0;
@@ -42,9 +42,9 @@ module MIPS(
         .bta_i(bta),
         .ra_i(register_address),
         .PC_i(PC_q),
-        .nPC_o(PC_d_full)
+        .nPC_o(nPC_d_full)
     );
-    assign PC_d = PC_d_full[31:2];
+    assign PC_d = nPC_d_full[31:2];
 
     ///////////////////////////////
     //Memory Bus and Peripherals //

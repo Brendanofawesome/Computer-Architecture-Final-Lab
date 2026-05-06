@@ -19,7 +19,7 @@ module datapath_id(
         output logic [25:0] imm_addr_o,
 
         //output wires to ID-EX reg from branch_precalc
-        output logic [31:2] b_adder_o,
+        output logic [31:2] branch_address_o,
 
         //output wires to ID-EX reg from ctrl_decoder
         output logic            mfsel_o,
@@ -70,6 +70,7 @@ module datapath_id(
         logic                   jal_trig_w;
         logic                   jump_trig_w;
         logic [4:0]             i_type_dst_w;   // output of I_type_dst_mux
+        logic [31:2]            branch_adder_w;
 
         opcode_decoder u_opcode_decoder(
                 .instr_i (registered_instruction),
@@ -90,8 +91,10 @@ module datapath_id(
         branch_precalc u_branch_precalc(
                 .src1 (pc_q),
                 .src2 (imm_w),
-                .q (b_adder_o)
+                .q (branch_adder_w)
         );
+
+        assign branch_address_o = jal_trig_w ? pc_q : branch_adder_w;
 
         ctrl_decoder u_ctrl_decoder(
                 .function_i (function_w),
@@ -120,14 +123,14 @@ module datapath_id(
                 .reg_write_en_o (reg_write_en_o),
 
                 .jump_trig_o (jump_trig_w),
-                .jal_trig_o (jal_trig_w),
+                .jal_sel_o (jal_trig_w),
                 .is_I_type_o (is_I_type_w)
         );
 
         // i_type_dst_mux output select
         assign i_type_dst_w = is_I_type_w ? rt_w : rd_w;
 
-        // jal_dst_mux outpu select
+        // jal_dst_mux output select
         assign dst_o = jal_trig_w ? 5'd31 : i_type_dst_w;
 
         //output assignments

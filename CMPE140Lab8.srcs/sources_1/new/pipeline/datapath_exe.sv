@@ -17,6 +17,7 @@ module datapath_exe (
     input  logic [4:0]  reg_dst_id,
     input  logic        branch_inv_id,
     input  logic        reg_wr_en_id,
+    input  logic        jal_id,
     input  logic        jr_id,
     input  logic        branch_id,
     input  logic [31:2] b_addr_id,
@@ -73,6 +74,7 @@ module datapath_exe (
     logic        d2_sel_ex;
 
     //branch control
+    logic        jal_sel_ex;
     logic        branch_inv_ex;
     logic        jr_ex;
     logic        branch_ex;
@@ -86,6 +88,7 @@ module datapath_exe (
     logic        mem_to_reg_ex_i;
     always_ff @(posedge clk or negedge rst_n) begin : ID_EX_REG
         if (!rst_n) begin
+            jal_sel_ex <= '0;
             shamt_ex <= '0;
             rs_addr_ex <= '0;
             rt_addr_ex <= '0;
@@ -110,6 +113,7 @@ module datapath_exe (
             mem_se_ex_i <= 1'b0;
             mem_to_reg_ex_i <= 1'b0;
         end else begin
+            jal_sel_ex <= jal_id;
             shamt_ex <= shamt_id;
             rs_addr_ex <= rs_addr_id;
             rt_addr_ex <= rt_addr_id;
@@ -154,82 +158,85 @@ module datapath_exe (
 
     logic        branch_success;
 
-    assign imm_se = imm_zero_ext_ex ? {16'b0, imm_id} : {{16{imm_id[15]}}, imm_id};
+    assign imm_se = imm_zero_ext_ex ? {16'b0, imm_ex} : {{16{imm_ex[15]}}, imm_ex};
     assign ra_ex = rs_data;
     assign bta_ex = branch_addr_ex;
     assign is_branch_type_ex = branch_ex;
 
-  // --- ALU Logic --- //
-  mux2to1 #(32) alu_d2_mux (
-      .a(rt_data),
-      .b(imm_se),
-      .sel(d2_sel_ex),
-      .y(alu_src2)
-  );
-
-  ALU alu (
-      .opcode_i(ALU_op_ex),
-      .shamt_i(shamt_ex),
-      .data1_i(rs_data),
-      .data2_i(alu_src2),
-      .data_o(alu_out),
-      .zero_o(alu_zero)
-  );
-
-  // --- Multiplication/Division Logic --- //
-  divmul_unit divmul (
-      .clk(clk),
-      .rst_n(rst_n),
-      .op_i(divmul_op_ex),
-      .signed_mode_i(divmul_signed_mode_ex),
-      .start_i(divmul_start_ex),
-      .d1_i(rs_data),
-      .d2_i(rt_data),
-      .ready_o(divmul_ready_o),
-      .hi_o(divmul_hi_q),
-      .lo_o(divmul_lo_q)
-  );
-
-  mux2to1 #(32) HI_LO_sel (
-      .a(divmul_hi_q),
-      .b(divmul_lo_q),
-      .sel(hi_lo_sel_ex),
-      .y(hilo_out)
-  );
-
-  mux2to1 #(32) D_wr_sel (
-      .a(alu_out),
-      .b(hilo_out),
-      .sel(use_hilo_ex),
-      .y(ALU_data_ex)
-  );
-
-  // --- Register Logic --- //
-    register_file regfile (
-            .clk(clk),
-            .read_addr1_i(rs_addr_ex),
-            .read_addr2_i(rt_addr_ex),
-            .write_data_i(reg_wb_data),
-            .write_addr_i(reg_wb_addr),
-            .write_en_i(reg_wb_en),
-                        .d1_o(rs_data),
-                        .d2_o(rt_data)
+    // --- ALU Logic --- //
+    mux2to1 #(32) alu_d2_mux (
+        .a(rt_data),
+        .b(imm_se),
+        .sel(d2_sel_ex),
+        .y(alu_src2)
     );
 
-  // --- Branch Logic --- //
-  mux2to1 branch_inv_mux (
-      .a(alu_zero),
-      .b(~alu_zero),
-      .sel(branch_inv_ex),
-      .y(branch_success)
-  );
+    ALU alu (
+        .opcode_i(ALU_op_ex),
+        .shamt_i(shamt_ex),
+        .data1_i(rs_data),
+        .data2_i(alu_src2),
+        .data_o(alu_out),
+        .zero_o(alu_zero)
+    );
 
-  mux2to1 branch_sel_mux (
-      .a(jr_ex),
-      .b(branch_success),
-      .sel(branch_ex),
-      .y(ex_jump_trig)
-  );
+    // --- Multiplication/Division Logic --- //
+    divmul_unit divmul (
+        .clk(clk),
+        .rst_n(rst_n),
+        .op_i(divmul_op_ex),
+        .signed_mode_i(divmul_signed_mode_ex),
+        .start_i(divmul_start_ex),
+        .d1_i(rs_data),
+        .d2_i(rt_data),
+        .ready_o(divmul_ready_o),
+        .hi_o(divmul_hi_q),
+        .lo_o(divmul_lo_q)
+    );
+
+    mux2to1 #(32) HI_LO_sel (
+        .a(divmul_hi_q),
+        .b(divmul_lo_q),
+        .sel(hi_lo_sel_ex),
+        .y(hilo_out)
+    );
+
+    always_comb begin : D_wr_sel
+        if(use_hilo_ex) begin
+            ALU_data_ex = hilo_out;
+        end else if (jal_sel_ex) begin
+            ALU_data_ex = branch_addr_ex;
+        end else begin
+            ALU_data_ex = alu_out;
+        end
+    end
+
+    // --- Register Logic --- //
+        register_file regfile (
+                .clk(clk),
+                .read_addr1_i(rs_addr_ex),
+                .read_addr2_i(rt_addr_ex),
+                .write_data_i(reg_wb_data),
+                .write_addr_i(reg_wb_addr),
+                .write_en_i(reg_wb_en),
+                            .d1_o(rs_data),
+                            .d2_o(rt_data)
+        );
+
+    // --- Branch Logic --- //
+    mux2to1 branch_inv_mux (
+        .a(alu_zero),
+        .b(~alu_zero),
+        .sel(branch_inv_ex),
+        .y(branch_success)
+    );
+
+    mux2to1 branch_sel_mux (
+        .a(jr_ex),
+        .b(branch_success),
+        .sel(branch_ex),
+        .y(ex_jump_trig)
+    );
 
     // expose registered write-back control and RT data for next stage (module outputs)
     assign mul_done_ex = divmul_ready_o;

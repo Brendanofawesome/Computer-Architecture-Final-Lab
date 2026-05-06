@@ -34,7 +34,7 @@ module ctrl_decoder(
 
     //ID internal signals
     output logic jump_trig_o, //triggers an unconditional jump
-    output logic jal_trig_o, //triggers a JAL
+    output logic jal_sel_o, //triggers a JAL
 
     output logic is_I_type_o //signals an I-type instruction
     );
@@ -67,7 +67,7 @@ module ctrl_decoder(
             BNE,
             BEQ,
             SUB,
-            SUBU: alu_op_o = ALU_SUB;
+            SUBU:   alu_op_o = ALU_SUB;
 
             AND:    alu_op_o = ALU_AND;
             OR:     alu_op_o = ALU_OR;
@@ -141,15 +141,15 @@ module ctrl_decoder(
             LH:  begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b01; mem_se_o = 1; mem_to_reg_o = 1; end
             LHU: begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b01; mem_se_o = 0; mem_to_reg_o = 1; end
             LW:  begin mem_en_o = 1; mem_dir_o = 0; mem_type_o = 2'b10; mem_se_o = 0; mem_to_reg_o = 1; end
-            SB:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b00; end
-            SH:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b01; end
-            SW:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b10; end
+            SB:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b00; mem_se_o = 0; mem_to_reg_o = 0; end
+            SH:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b01; mem_se_o = 0; mem_to_reg_o = 0; end
+            SW:  begin mem_en_o = 1; mem_dir_o = 1; mem_type_o = 2'b10; mem_se_o = 0; mem_to_reg_o = 0; end
             default: begin
-                mem_en_o    = 0;
-                mem_dir_o   = 0;
-                mem_type_o  = 2'b10; //word
-                mem_se_o    = 0;
-                mem_to_reg_o = 0;;
+                mem_en_o     = 1'b0;
+                mem_dir_o    = 1'b0;
+                mem_type_o   = 2'b10;
+                mem_se_o     = 1'b0;
+                mem_to_reg_o = 1'b0;
             end
         endcase
     end
@@ -173,8 +173,8 @@ module ctrl_decoder(
     end
 
     //ID-stage jump/type control
-    assign jump_trig_o = function_i == J;
-    assign jal_trig_o  = function_i == JAL;
+    assign jump_trig_o = function_i == J || function_i == JAL;
+    assign jal_sel_o  = function_i == JAL;
     assign is_I_type_o = format_i == FORMAT_INSTR_I;
 
 endmodule
