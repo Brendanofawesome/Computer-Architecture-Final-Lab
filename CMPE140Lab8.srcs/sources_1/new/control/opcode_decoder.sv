@@ -40,7 +40,7 @@ typedef enum bit [5:0] {
     FUNCT_SRA   = 6'h03,
     FUNCT_JR    = 6'h08,
     FUNCT_MFHI  = 6'h10,
-    FUNCT_MFLO  = 6'h11,
+    FUNCT_MFLO  = 6'h12,
     FUNCT_MULT  = 6'h18,
     FUNCT_MULTU = 6'h19,
     FUNCT_DIV   = 6'h1A,

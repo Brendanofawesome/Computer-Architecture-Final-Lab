@@ -97,13 +97,13 @@ module mips_fpga (
             io_buffer led_buffer (
                 .pin            (LED[j]),
                 .gpio_input     (),
-                .gpio_output    (io2_output[j] | io2_output[16 + j]),
-                .gpio_oe        (oe2[j] | oe2[16 + j])
+                .gpio_output    (io2_output[16 + j]),
+                .gpio_oe        (oe2[16 + j])
             );
         end
     endgenerate
 
-    MIPS mips_top (
+    MIPS #(.IMEM_INIT_FILE("C:/Users/Brend/Downloads/MARS/mipsblink.hex")) mips_top (
             .clk                (clk_db),
             .rst_n              (rst_n),
 

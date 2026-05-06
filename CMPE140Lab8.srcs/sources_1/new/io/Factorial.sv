@@ -4,7 +4,7 @@ module Factorial(
     input [3:0] hex_in,
     input go,
     input clk,
-    input rst,
+    input rst_n,
     output [31:0] hex_out,
     output reg done,
     output reg error
@@ -22,8 +22,8 @@ module Factorial(
     localparam bit [1:0] StateDone = 2'b10;
     localparam bit [1:0] StateRunning = 2'b11;
 
-    always @(posedge clk or posedge rst) begin
-        if (rst) begin
+    always @(posedge clk) begin
+        if (!rst_n) begin
             state <= StateIdle;
             done <= 0;
             error <= 0;

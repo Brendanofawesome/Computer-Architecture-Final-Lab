@@ -20,7 +20,7 @@ module factorial_module_interface(
         .hex_in(hex_in_reg),
         .go(go_req),
         .clk(clk),
-        .rst(~rst_n),
+        .rst_n(rst_n),
         .hex_out(fact_out),
         .done(fact_done),
         .error(fact_error)
