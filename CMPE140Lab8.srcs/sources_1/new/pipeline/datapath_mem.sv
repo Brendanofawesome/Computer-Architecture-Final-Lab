@@ -29,6 +29,13 @@ module datapath_mem (
     logic [31:0]    reg_d2_reg;
     logic           mem_to_reg_reg;
 
+    //added missing mem control registers
+    logic           mem_se_reg;
+    logic [1:0]     mem_type_reg;
+    logic           mem_dir_reg;
+    logic           mem_en_reg;
+
+
     //Note that some signals are already registered by the memory units
     // => passthrough directly to avoid extra cycle latency
     always_ff @( posedge clk ) begin : EX_MEM_REG
@@ -38,12 +45,20 @@ module datapath_mem (
             ALU_data_reg <= '0;
             reg_d2_reg <= '0;
             mem_to_reg_reg <= 1'b0;
+            mem_se_reg     <= 1'b0;
+            mem_type_reg   <= 2'b10;  // word (matches ctrl_decoder default)
+            mem_dir_reg    <= 1'b0;
+            mem_en_reg     <= 1'b0;
         end else begin
             reg_wr_en_reg <= reg_wr_en_i;
             reg_dst_reg <= reg_dst_i;
             ALU_data_reg <= ALU_data_i;
             reg_d2_reg <= reg_d2;
             mem_to_reg_reg <= mem_to_reg;
+             mem_se_reg     <= mem_se;
+            mem_type_reg   <= mem_type;
+            mem_dir_reg    <= mem_dir;
+            mem_en_reg     <= mem_en;
         end
     end
 
@@ -53,13 +68,13 @@ module datapath_mem (
         .clk(clk),
         .rst_n(rst_n),
 
-        .address_i (ALU_data_mem),
-        .data_i (reg_d2_mem),
+        .address_i (ALU_data_reg),
+        .data_i (reg_d2_reg),
 
-        .sign_extend_i(mem_se_mem),
-        .data_type_i(mem_type_mem),
-        .data_dir_i(mem_dir_mem),
-        .en_i(mem_en_mem),
+        .sign_extend_i(mem_se_reg),
+        .data_type_i(mem_type_reg),
+        .data_dir_i(mem_dir_reg),
+        .en_i(mem_en_reg),
 
         .data_o(mem_data_o),
         .membus_o(mem_bus),
@@ -67,14 +82,14 @@ module datapath_mem (
     );
 
     mux2to1 #(.WIDTH(32)) mem_mux(
-        .a(ALU_data_mem),
+        .a(ALU_data_reg),
         .b(mem_data_o),
-        .sel(mem_to_reg_mem),
+        .sel(mem_to_reg_reg),
         .y(reg_wr_data)
     );
 
 
     //passthrough
-    assign reg_wr_en = reg_wr_en_mem;
-    assign reg_dst   = reg_dst_mem;
+    assign reg_wr_en = reg_wr_en_reg;
+    assign reg_dst   = reg_dst_reg;
 endmodule
