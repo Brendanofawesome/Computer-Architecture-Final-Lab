@@ -103,8 +103,8 @@ module mips_fpga (
         end
     endgenerate
 
-    MIPS #(.IMEM_INIT_FILE("C:/Users/Brend/Downloads/MARS/gpiotest.hex")) mips_top (
-            .clk                (clk_db),
+    MIPS #(.IMEM_INIT_FILE("C:/Users/Brend/Downloads/MARS/mipsblink.hex")) mips_top (
+            .clk                (clk_5KHz),
             .rst_n              (rst_n),
 
             .io1_output         (io1_output),

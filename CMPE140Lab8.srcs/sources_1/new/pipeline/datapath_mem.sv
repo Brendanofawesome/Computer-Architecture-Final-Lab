@@ -24,7 +24,6 @@ module datapath_mem (
     logic        reg_wr_en_reg;
     logic [4:0]  reg_dst_reg;
     logic [31:0] ALU_data_reg;
-    logic [31:0] reg_d2_reg;
     logic        mem_to_reg_reg;
 
     always_ff @(posedge clk) begin
@@ -33,12 +32,11 @@ module datapath_mem (
             reg_dst_reg    <= 5'd0;
             ALU_data_reg   <= 32'd0;
             reg_d2_reg     <= 32'd0;
-            mem_to_reg_reg <= '0;
+            mem_to_reg_reg <= 1'b0;
         end else begin
             reg_wr_en_reg  <= reg_wr_en_i;
             reg_dst_reg    <= reg_dst_i;
             ALU_data_reg   <= ALU_data_i;
-            reg_d2_reg     <= reg_d2;
             mem_to_reg_reg <= mem_to_reg;
         end
     end
@@ -52,13 +50,13 @@ module datapath_mem (
         .clk(clk),
         .rst_n(rst_n),
 
-        .address_i(ALU_data_reg),
-        .data_i(reg_d2_reg),
+        .address_i(ALU_data),
+        .data_i(reg_d2),
 
         .sign_extend_i(mem_se),
         .data_type_i(mem_type),
         .data_dir_i(mem_dir),
-        .en_i(mem_en_i),
+        .en_i(mem_en),
 
         .data_o(mem_data),
         .membus_o(mem_bus),
