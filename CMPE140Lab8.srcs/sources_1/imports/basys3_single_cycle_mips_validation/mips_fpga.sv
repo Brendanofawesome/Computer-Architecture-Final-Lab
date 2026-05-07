@@ -113,6 +113,7 @@ module mips_fpga (
 
             .io2_output         (io2_output),
             .io2_input          (io2_input),
-            .oe2                (oe2)
+            .oe2                (oe2),
+            .pc_o               ()
         );
 endmodule

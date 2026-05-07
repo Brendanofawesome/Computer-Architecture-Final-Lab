@@ -1,8 +1,12 @@
-//pipeline hazard / stall control unit
-// freezes PC + IF/ID and injects a NOP into ID/EX when the instruction in ID
-// must wait for an older instruction to produce its value.
+// Pipeline hazard / stall control unit.
+//
+// The datapath has MEM/WB forwarding, so ordinary ALU RAW dependencies do not
+// need stalls.  The two real interlocks are:
+//   1) load-use: the loaded value is not available to the immediately following
+//      instruction's EX stage, so insert one bubble;
+//   2) MFHI/MFLO while the mult/div unit is still busy.
 module hazard_unit (
-    //decoded instruction currently in ID
+    // decoded instruction currently in ID
     input  logic        id_uses_rs_i,
     input  logic        id_uses_rt_i,
     input  logic        id_branch_i,
@@ -12,17 +16,13 @@ module hazard_unit (
     input  logic [4:0]  id_rt_i,
     input  logic        id_jump_trig_i,
 
-    //instruction currently in EX
+    // instruction currently in EX
     input  logic        ex_reg_write_i,
     input  logic [4:0]  ex_reg_dst_i,
     input  logic        ex_mem_to_reg_i,
     input  logic        ex_jump_trig_i,
 
-    //instruction currently in MEM
-    input  logic        mem_reg_write_i,
-    input  logic [4:0]  mem_reg_dst_i,
-
-    //is div/mul unit ready with the result
+    // mult/div status
     input  logic        divmul_ready_i,
 
     output logic        stall_pc_o,
@@ -34,41 +34,45 @@ module hazard_unit (
     output logic        mfrd_stall_o
 );
 
-    logic rs_waiting_ex, rt_waiting_ex;
-    logic rs_waiting_mem, rt_waiting_mem;
-    logic raw_waiting_ex;
-    logic load_use_waiting_ex;
-    logic stall_any;
+    logic rs_depends_on_ex;
+    logic rt_depends_on_ex;
+    logic load_use_stall;
+    logic hilo_stall;
+    logic data_stall;
+    logic branch_or_jr;
 
-    assign rs_waiting_ex  = id_uses_rs_i && ex_reg_write_i  && (ex_reg_dst_i  != 5'd0) && (ex_reg_dst_i  == id_rs_i);
-    assign rt_waiting_ex  = id_uses_rt_i && ex_reg_write_i  && (ex_reg_dst_i  != 5'd0) && (ex_reg_dst_i  == id_rt_i);
-    assign rs_waiting_mem = id_uses_rs_i && mem_reg_write_i && (mem_reg_dst_i != 5'd0) && (mem_reg_dst_i == id_rs_i);
-    assign rt_waiting_mem = id_uses_rt_i && mem_reg_write_i && (mem_reg_dst_i != 5'd0) && (mem_reg_dst_i == id_rt_i);
+    assign rs_depends_on_ex = id_uses_rs_i &&
+                              ex_reg_write_i &&
+                              (ex_reg_dst_i != 5'd0) &&
+                              (ex_reg_dst_i == id_rs_i);
 
-    assign raw_waiting_ex = rs_waiting_ex || rt_waiting_ex;
+    assign rt_depends_on_ex = id_uses_rt_i &&
+                              ex_reg_write_i &&
+                              (ex_reg_dst_i != 5'd0) &&
+                              (ex_reg_dst_i == id_rt_i);
 
-    //ALU/branch/store consumers only need to stall
-    // when the producer in EX is a load. That value is not available soon enough
-    // for the next instruction's EX stage without inserting one bubble.
-    assign load_use_waiting_ex = ex_mem_to_reg_i && raw_waiting_ex;
-    assign raw_stall_o = load_use_waiting_ex;
+    // Only a load in EX needs a RAW interlock.  ALU/div-hi-lo values are either
+    // forwarded or held by the MFHI/MFLO-specific interlock below.
+    assign load_use_stall = ex_mem_to_reg_i && (rs_depends_on_ex || rt_depends_on_ex);
+    assign hilo_stall     = id_mfrd_i && !divmul_ready_i;
+    assign data_stall     = load_use_stall || hilo_stall;
+    assign branch_or_jr   = id_branch_i || id_jr_i;
 
-    //branches/JR also use the forwarded EX operands. They only stall for the
-    // same load-use case above.
-    assign branch_stall_o = (id_branch_i || id_jr_i) && load_use_waiting_ex;
+    // Status/debug outputs.
+    assign raw_stall_o    = load_use_stall;
+    assign branch_stall_o = branch_or_jr && load_use_stall;
+    assign mfrd_stall_o   = hilo_stall;
 
-    //MF must not enter EX until HI/LO has a valid result from divmul_unit.
-    assign mfrd_stall_o = id_mfrd_i && !divmul_ready_i;
+    // A taken EX-stage redirect wins over a data stall; do not freeze the PC
+    // when the correct redirect target is already known.
+    assign stall_pc_o    = data_stall && !ex_jump_trig_i;
+    assign stall_if_id_o = data_stall && !ex_jump_trig_i;
 
-    assign stall_any = raw_stall_o || mfrd_stall_o;
+    // Taken EX-stage branch/JR flushes IF/ID and the instruction entering EX.
+    // J/JAL is resolved in ID, so only IF/ID is flushed and the jump itself is
+    // allowed to continue into EX.  During a data stall, hold IF/ID instead of
+    // flushing it.
+    assign if_id_flush_o  = ex_jump_trig_i || (id_jump_trig_i && !data_stall);
+    assign bubble_id_ex_o = data_stall || ex_jump_trig_i;
 
-    // PC and IF/ID hold their values when stalling
-    assign stall_pc_o    = stall_any && !ex_jump_trig_i;
-    assign stall_if_id_o = stall_any && !ex_jump_trig_i;
-
-    // EX-stage jump: flush IF/ID and ID/EX
-    // ID-stage jump (J/JAL): flush IF/ID only (PC+4 of jump)
-    // Stall: bubble ID/EX
-    assign if_id_flush_o   = ex_jump_trig_i || id_jump_trig_i;
-    assign bubble_id_ex_o  = stall_any || ex_jump_trig_i;
 endmodule

@@ -238,8 +238,6 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipsblink.hex")(
         .ex_reg_dst_i(reg_dst_ex),
         .ex_mem_to_reg_i(mem_to_reg_ex),
         .ex_jump_trig_i(ex_jump_trig_o),
-        .mem_reg_write_i(reg_wr_en_mem),
-        .mem_reg_dst_i(reg_dst_mem),
         .divmul_ready_i(divmul_ready_ex),
         .stall_pc_o(stall_pc),
         .stall_if_id_o(stall_if_id),
