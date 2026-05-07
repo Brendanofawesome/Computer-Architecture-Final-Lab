@@ -49,7 +49,7 @@ module datapath_mem (
         .clk(clk),
         .rst_n(rst_n),
 
-        .address_i(ALU_data),
+        .address_i(ALU_data_i),
         .data_i(reg_d2),
 
         .sign_extend_i(mem_se),

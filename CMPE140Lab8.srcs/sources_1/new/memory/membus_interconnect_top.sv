@@ -101,18 +101,21 @@ module membus_interconnect_top(
     // multiplex reads
     // register peripheral selection for one cycle to delay read mux
     peripherals_e current_peripheral_reg;
+    logic decode_error_reg;
     always_ff @(posedge clk) begin
         if(!rst_n) begin
             current_peripheral_reg <= NONE;
+            decode_error_reg <= 1'b0;
         end else begin
             current_peripheral_reg <= current_peripheral;
+            decode_error_reg <= decode_error;
         end
     end
 
     always_comb begin : read_mux
         input_bus.data_out = '0;
 
-        if(!decode_error && current_peripheral_reg != NONE) begin
+        if(!decode_error_reg && current_peripheral_reg != NONE) begin
             unique case(current_peripheral_reg)
                 MEMORY: input_bus.data_out = ram_bus.data_out;
                 GPIO1:  input_bus.data_out = gpio1_bus.data_out;
