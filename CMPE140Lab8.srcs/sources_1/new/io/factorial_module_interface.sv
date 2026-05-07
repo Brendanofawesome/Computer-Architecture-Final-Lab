@@ -53,17 +53,18 @@ module factorial_module_interface(
         end
     end
 
-    // provide read data combinationally
-    always_comb begin
-        factorial_bus.data_out = '0;
-        if (factorial_bus.select) begin
+    // provide read data synchronously
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            factorial_bus.data_out <= '0;
+        end else if (factorial_bus.select) begin
             unique case (factorial_address)
-                2'b00: factorial_bus.data_out = fact_out; // result
-                2'b01: begin
-                    factorial_bus.data_out = {30'b0, fact_error, fact_done};
-                end // status: [1]=error, [0]=done
-                default: factorial_bus.data_out = '0;
+                2'b00: factorial_bus.data_out <= fact_out; // result
+                2'b01: factorial_bus.data_out <= {30'b0, fact_error, fact_done}; // status
+                default: factorial_bus.data_out <= '0;
             endcase
+        end else begin
+            factorial_bus.data_out <= '0;
         end
     end
 
