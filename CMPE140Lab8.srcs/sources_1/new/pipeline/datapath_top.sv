@@ -45,6 +45,8 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipsblink.hex")(
     );
 
     // ID-stage decode wires
+    instruction_function_e  function_id;
+    instruction_format_e instruction_format_id;
     logic [4:0]  shamt_id;
     logic [15:0] imm_id;
     logic [4:0]  rs_id;
@@ -83,23 +85,38 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipsblink.hex")(
     logic        id_uses_rt;
 
     //determine the registers read by ID instruction
-    instruction_format_e instruction_format_id;
     always_comb begin
+        id_uses_rs = 1'b0;
+        id_uses_rt = 1'b0;
+
         unique case (instruction_format_id)
             FORMAT_INSTR_R: begin
-                id_uses_rs = 1'b1;
-                id_uses_rt = !jr_id;
+                unique case (function_id)
+                    JR: begin
+                        id_uses_rs = 1'b1;
+                        id_uses_rt = 1'b0;
+                    end
+
+                    MFHI, MFLO: begin
+                        id_uses_rs = 1'b0;
+                        id_uses_rt = 1'b0;
+                    end
+
+                    SLL, SRL, SRA: begin
+                        id_uses_rs = 1'b0;
+                        id_uses_rt = 1'b1;
+                    end
+
+                    default: begin
+                        id_uses_rs = 1'b1;
+                        id_uses_rt = 1'b1;
+                    end
+                endcase
             end
 
             FORMAT_INSTR_I: begin
                 id_uses_rs = 1'b1;
-                id_uses_rt = mem_dir_id || branch_id;
-            end
-
-
-            FORMAT_INSTR_J: begin
-                id_uses_rs = 1'b0;
-                id_uses_rt = 1'b0;
+                id_uses_rt = branch_id;
             end
 
             default: begin
@@ -143,7 +160,8 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipsblink.hex")(
         .divmul_start_o(divmul_start_id),
         .divmul_signmode_o(divmul_signmode_id),
         .dst_o(dst_id),
-        .instruction_format_o(instruction_format_id)
+        .instruction_format_o(instruction_format_id),
+        .decoded_function_o(function_id)
     );
 
     assign jump_address_o = imm_addr_id;

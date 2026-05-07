@@ -13,9 +13,9 @@ module led_mux (
     reg [11:0] led_ctrl;
 
     assign {LEDSEL, LEDOUT} = led_ctrl;
-    
+
     always @ (posedge clk) index <= (rst) ? 2'b0 : (index + 2'd1);
-    
+
     always @ (index, LED0, LED1, LED2, LED3) begin
         case (index)
                2'd0: led_ctrl <= {4'b1110, LED0};

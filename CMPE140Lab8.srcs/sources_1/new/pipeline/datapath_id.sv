@@ -20,6 +20,8 @@ module datapath_id(
         output logic [4:0] rt_o,
         output logic [25:0] imm_addr_o,
 
+        output instruction_function_e decoded_function_o,
+
         //output wires to ID-EX reg from branch_precalc
         output logic [31:2] branch_address_o,
 
@@ -149,4 +151,5 @@ module datapath_id(
         assign decode_err_o = illegal_instr_w;
 
         assign instruction_format_o = format_w;
+        assign decoded_function_o = function_w;
 endmodule

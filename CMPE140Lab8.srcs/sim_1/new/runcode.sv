@@ -5,7 +5,7 @@ module generic_hex_tb;
     localparam int CLK_PERIOD = 10;
 
     // 🔹 Compile-time selected program
-    localparam string HEX_FILE = "C:/Users/Brend/Downloads/MARS/gpiotest.hex";
+    localparam string HEX_FILE = "factorial.hex";
     localparam int MAX_CYCLES  = 1000;
 
     logic clk;

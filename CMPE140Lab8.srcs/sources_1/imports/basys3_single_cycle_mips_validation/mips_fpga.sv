@@ -14,7 +14,6 @@ module mips_fpga (
 
     clk_gen clk_gen (
         .clk100MHz          (clk),
-        .rst                (rst_b),
         .clk_sec            (),
         .clk_5KHz           (clk_5KHz)
     );
@@ -56,7 +55,7 @@ module mips_fpga (
     wire [7:0]  digit1;
     wire [7:0]  digit2;
     wire [7:0]  digit3;
-    assign {digit3, digit2, digit1, digit0} = ~io1_output_muxed;
+    assign {digit3, digit2, digit1, digit0} = io1_output_muxed;
 
     led_mux led_mux (
             .clk                (clk_5KHz),
@@ -106,8 +105,8 @@ module mips_fpga (
         end
     endgenerate
 
-    MIPS #(.IMEM_INIT_FILE("C:/Users/Brend/Downloads/MARS/mipsblink.hex")) mips_top (
-            .clk                (clk_db),
+    MIPS #(.IMEM_INIT_FILE("factorial.hex")) mips_top (
+            .clk                (clk_5KHz),
             .rst_n              (rst_n),
 
             .io1_output         (io1_output),
