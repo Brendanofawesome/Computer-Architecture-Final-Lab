@@ -25,11 +25,6 @@ module datapath_mem (
     logic [4:0]  reg_dst_reg;
     logic [31:0] ALU_data_reg;
     logic [31:0] reg_d2_reg;
-
-    logic        mem_se_reg;
-    logic [1:0]  mem_type_reg;
-    logic        mem_dir_reg;
-    logic        mem_en_reg;
     logic        mem_to_reg_reg;
 
     always_ff @(posedge clk) begin
@@ -38,22 +33,12 @@ module datapath_mem (
             reg_dst_reg    <= 5'd0;
             ALU_data_reg   <= 32'd0;
             reg_d2_reg     <= 32'd0;
-
-            mem_se_reg     <= 1'b0;
-            mem_type_reg   <= 2'b10;
-            mem_dir_reg    <= 1'b0;
-            mem_en_reg     <= 1'b0;
-            mem_to_reg_reg <= 1'b0;
+            mem_to_reg_reg <= '0;
         end else begin
             reg_wr_en_reg  <= reg_wr_en_i;
             reg_dst_reg    <= reg_dst_i;
             ALU_data_reg   <= ALU_data_i;
             reg_d2_reg     <= reg_d2;
-
-            mem_se_reg     <= mem_se;
-            mem_type_reg   <= mem_type;
-            mem_dir_reg    <= mem_dir;
-            mem_en_reg     <= mem_en;
             mem_to_reg_reg <= mem_to_reg;
         end
     end
@@ -61,7 +46,7 @@ module datapath_mem (
     assign reg_wr_en = reg_wr_en_reg;
     assign reg_dst   = reg_dst_reg;
 
-    logic [31:0] mem_data_o;
+    logic [31:0] mem_data;
 
     memory_controller mem_controller (
         .clk(clk),
@@ -70,19 +55,19 @@ module datapath_mem (
         .address_i(ALU_data_reg),
         .data_i(reg_d2_reg),
 
-        .sign_extend_i(mem_se_reg),
-        .data_type_i(mem_type_reg),
-        .data_dir_i(mem_dir_reg),
-        .en_i(mem_en_reg),
+        .sign_extend_i(mem_se),
+        .data_type_i(mem_type),
+        .data_dir_i(mem_dir),
+        .en_i(mem_en_i),
 
-        .data_o(mem_data_o),
+        .data_o(mem_data),
         .membus_o(mem_bus),
         .address_o(mem_address_o)
     );
 
     mux2to1 #(.WIDTH(32)) mem_mux (
         .a(ALU_data_reg),
-        .b(mem_data_o),
+        .b(mem_data),
         .sel(mem_to_reg_reg),
         .y(reg_wr_data)
     );

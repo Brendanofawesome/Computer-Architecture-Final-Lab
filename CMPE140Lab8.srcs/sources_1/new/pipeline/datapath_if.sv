@@ -2,7 +2,7 @@
 
 module datapath_if #(
     parameter int IMEM_ADDR_BITS = 10,
-    parameter string IMEM_INIT_FILE = "mipstest.bin"
+    parameter string IMEM_INIT_FILE = "mipsblink.hex"
 )(
     input clk,
     input rst_n,

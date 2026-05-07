@@ -43,38 +43,20 @@ module mips_fpga (
     wire [31:0] oe1;
     assign io1_input = '0;
 
-    wire [31:0] pc_output;
+    wire [31:0] io1_output_muxed;
 
-    function automatic [7:0] hex_to_7seg(input logic [3:0] hex);
-        case (hex)
-            4'h0: hex_to_7seg = 8'b1100_0000;
-            4'h1: hex_to_7seg = 8'b1111_1001;
-            4'h2: hex_to_7seg = 8'b1010_0100;
-            4'h3: hex_to_7seg = 8'b1011_0000;
-            4'h4: hex_to_7seg = 8'b1001_1001;
-            4'h5: hex_to_7seg = 8'b1001_0010;
-            4'h6: hex_to_7seg = 8'b1000_0010;
-            4'h7: hex_to_7seg = 8'b1111_1000;
-            4'h8: hex_to_7seg = 8'b1000_0000;
-            4'h9: hex_to_7seg = 8'b1001_0000;
-            4'hA: hex_to_7seg = 8'b1000_1000;
-            4'hB: hex_to_7seg = 8'b1000_0011;
-            4'hC: hex_to_7seg = 8'b1100_0110;
-            4'hD: hex_to_7seg = 8'b1010_0001;
-            4'hE: hex_to_7seg = 8'b1000_0110;
-            4'hF: hex_to_7seg = 8'b1000_1110;
-            default: hex_to_7seg = 8'b1111_1111;
-        endcase
-    endfunction
+    genvar i;
+    generate
+        for(i = 0; i < 32; i = i + 1) begin : g_7Seg_Signals
+            assign io1_output_muxed[i] = oe1[i] ? io1_output[i] : 1'b0;
+        end
+    endgenerate
 
     wire [7:0]  digit0;
     wire [7:0]  digit1;
     wire [7:0]  digit2;
     wire [7:0]  digit3;
-    assign digit0 = hex_to_7seg(pc_output[3:0]);
-    assign digit1 = hex_to_7seg(pc_output[7:4]);
-    assign digit2 = hex_to_7seg(pc_output[11:8]);
-    assign digit3 = hex_to_7seg(pc_output[15:12]);
+    assign {digit3, digit2, digit1, digit0} = ~io1_output_muxed;
 
     led_mux led_mux (
             .clk                (clk_5KHz),
@@ -98,7 +80,8 @@ module mips_fpga (
     wire [31:0] io2_output;
     wire [31:0] io2_input;
     wire [31:0] oe2;
-    assign io2_input[31:16] = 13'b0;
+    assign io2_input[31:19] = 13'b0;
+    assign io2_input[18:16] = buttons_debounced;
 
 
     genvar j;
@@ -120,7 +103,7 @@ module mips_fpga (
         end
     endgenerate
 
-    MIPS #(.IMEM_INIT_FILE("C:/Users/Brend/Downloads/MARS/mipsblink.hex")) mips_top (
+    MIPS #(.IMEM_INIT_FILE("C:/Users/Brend/Downloads/MARS/gpiotest.hex")) mips_top (
             .clk                (clk_db),
             .rst_n              (rst_n),
 
@@ -130,8 +113,6 @@ module mips_fpga (
 
             .io2_output         (io2_output),
             .io2_input          (io2_input),
-            .oe2                (oe2),
-
-            .pc_o               (pc_output)
+            .oe2                (oe2)
         );
 endmodule

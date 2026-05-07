@@ -1,6 +1,6 @@
 //top level MIPS processor!
 
-module MIPS #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
+module MIPS #(parameter string IMEM_INIT_FILE = "mipsblink.hex")(
     input clk, rst_n,
 
     output [31:0]   io1_output,
@@ -23,7 +23,7 @@ module MIPS #(parameter string IMEM_INIT_FILE = "mipstest.bin")(
     logic        stall_pc;
     always @( posedge clk ) begin : PC_reg
         if(!rst_n)
-            PC_q <= '1;
+            PC_q <= '0;
         else if (!stall_pc)
             PC_q <= PC_d;
     end
