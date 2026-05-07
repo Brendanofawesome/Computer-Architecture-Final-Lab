@@ -31,7 +31,6 @@ module datapath_mem (
             reg_wr_en_reg  <= 1'b0;
             reg_dst_reg    <= 5'd0;
             ALU_data_reg   <= 32'd0;
-            reg_d2_reg     <= 32'd0;
             mem_to_reg_reg <= 1'b0;
         end else begin
             reg_wr_en_reg  <= reg_wr_en_i;
