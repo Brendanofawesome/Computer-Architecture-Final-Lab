@@ -19,7 +19,7 @@ module next_pc_gen(
 
     //PC
     input logic [31:2] PC_i, //current PC word address, used for calculating PC+4 and J-type address
-    output logic [31:0] nPC_o //next PC, selected from one of the above sources
+    output logic [31:2] nPC_o //next PC word address, selected from one of the above sources
     );
 
     /////////////////////
@@ -31,10 +31,10 @@ module next_pc_gen(
         logic [31:2] PC_branch_address;
 
     /////////////////////////////
-    // shift next PC in output //
+    // selected next PC address //
     /////////////////////////////
     logic [31:2] selected_nPC;
-    assign nPC_o = {selected_nPC, 2'b00};
+    assign nPC_o = selected_nPC;
 
     ///////////////////////////
     // select next PC source //

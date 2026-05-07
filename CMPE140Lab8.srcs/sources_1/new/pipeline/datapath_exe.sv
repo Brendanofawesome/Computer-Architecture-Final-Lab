@@ -39,7 +39,7 @@ module datapath_exe (
 
     output logic [31:0] ALU_data_ex,
     output logic [31:2] bta_ex,
-    output logic [31:0] ra_ex,
+    output logic [31:2] ra_ex,
     output logic        is_branch_type_ex,
     output logic        ex_jump_trig,
     output logic        mul_done_ex,
@@ -213,7 +213,7 @@ module datapath_exe (
     end
 
     assign imm_se = imm_zero_ext_ex ? {16'b0, imm_ex} : {{16{imm_ex[15]}}, imm_ex};
-    assign ra_ex = rs_data;
+    assign ra_ex = rs_data[31:2];
     assign bta_ex = branch_addr_ex;
     assign is_branch_type_ex = branch_ex;
 

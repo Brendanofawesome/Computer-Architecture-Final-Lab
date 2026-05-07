@@ -40,9 +40,6 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipsblink.hex")(
     logic stall_if_id;
 
     datapath_if #(.IMEM_INIT_FILE(IMEM_INIT_FILE)) u_if (
-        .clk(clk),
-        .rst_n(rst_n),
-        .stall_i(stall_if_id),
         .address_i(pc_i),
         .instr_o(instr_if)
     );
@@ -155,7 +152,7 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipsblink.hex")(
     // EX-stage outputs
     logic [31:0] alu_data_ex;
     logic [31:2] bta_ex;
-    logic [31:0] ra_ex;
+    logic [31:2] ra_ex;
     logic        is_branch_type_ex;
     logic [4:0]  reg_dst_ex;
     logic        reg_wr_en_ex;
@@ -285,7 +282,7 @@ module datapath_top #(parameter string IMEM_INIT_FILE = "mipsblink.hex")(
     assign reg_dst_o = reg_dst_wb;
     assign reg_d2_o = reg_d2_ex;
     assign alu_data_ex_o = alu_data_ex;
-    assign ra_o = ra_ex[31:2];
+    assign ra_o = ra_ex;
     assign is_branch_type_o = is_branch_type_ex;
     assign reg_wr_data_o = data_wb;
 

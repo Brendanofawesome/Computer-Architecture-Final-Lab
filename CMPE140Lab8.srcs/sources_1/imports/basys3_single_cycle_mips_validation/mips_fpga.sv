@@ -80,6 +80,9 @@ module mips_fpga (
     wire [31:0] io2_output;
     wire [31:0] io2_input;
     wire [31:0] oe2;
+    (* keep = "true", dont_touch = "true" *) wire unused_io2_low_sink;
+    assign unused_io2_low_sink = ^{io2_output[15:0], oe2[15:0]};
+
     assign io2_input[31:19] = 13'b0;
     assign io2_input[18:16] = buttons_debounced;
 

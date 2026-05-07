@@ -19,7 +19,6 @@ module MIPS #(parameter string IMEM_INIT_FILE = "mipsblink.hex")(
     ////////////////
 
     logic [31:2] PC_q, PC_d; // PC word-address register
-    logic [31:0] nPC_d_full;
     logic        stall_pc;
     always @( posedge clk ) begin : PC_reg
         if(!rst_n)
@@ -47,9 +46,8 @@ module MIPS #(parameter string IMEM_INIT_FILE = "mipsblink.hex")(
         .bta_i(bta),
         .ra_i(register_address),
         .PC_i(PC_q),
-        .nPC_o(nPC_d_full)
+        .nPC_o(PC_d)
     );
-    assign PC_d = nPC_d_full[31:2];
 
     ///////////////////////////////
     //Memory Bus and Peripherals //
