@@ -99,7 +99,7 @@ module datapath_id(
                 .q (branch_adder_w)
         );
 
-        assign branch_address_o = jal_trig_w ? pc_q : branch_adder_w;
+        assign branch_address_o = jal_trig_w ? (pc_q + 30'd1) : branch_adder_w;
 
         ctrl_decoder u_ctrl_decoder(
                 .function_i (function_w),
