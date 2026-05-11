@@ -3,7 +3,7 @@
 *To build, simply open the .xpr with Vivado
 
 The purpose of this lab is to implement a full-pipeline MIPS processor with a built-in factorial accelerator. A full list of goals/milestones is:  
-    <blockquote><details><summary>[ ] five stage pipeline</summary><blockquote>
+    <blockquote><details><summary>[x] five stage pipeline</summary><blockquote>
         [x] instruction fetch stage  
         [x] instruction decode stage  
         [x] instruction execute stage  
@@ -16,7 +16,7 @@ The purpose of this lab is to implement a full-pipeline MIPS processor with a bu
         [x] registerfile  
         [x] memory controller  
         [x] PC datapath  </blockquote></details>  
-    <details><summary>[ ] hazard control unit</summary><blockquote>
+    <details><summary>[x] hazard control unit</summary><blockquote>
         [x] Data read after write hazards from registers  
         [x] Data use after read hazards from memory  
         [x] Branching hazards  </blockquote></details>  
@@ -25,15 +25,15 @@ The purpose of this lab is to implement a full-pipeline MIPS processor with a bu
         [x] 0x00000-0x000FC => data memory address range  
         [x] 0x80000-0x8000C => factorial accelerator address range  
         [x] 0x90000-0x9000C => GPIO address range  </blockquote></details>  
-    <details><summary>[ ] factorial accelerator</summary><blockquote>
+    <details><summary>[x] factorial accelerator</summary><blockquote>
         [x] accepts 4-bit inputs  
         [x] register based control unit  </blockquote></details>  
     <details><summary>[x] GPIO module (64 io pins?)</summary><blockquote>
         [x] register-based control unit  
         [x] 2x 32-bit input registers  
         [x] 2x 32-bit output registers </blockquote></details>  
-    <details><summary>[ ] tests (for everything)</summary><blockquote>
-        [ ] processor core  
+    <details><summary>[x] tests (for everything)</summary><blockquote>
+        [x] processor core  
         [x] entire memory space  
         [x] factorial accelerator  
             [x] compare speed to software factorial  
