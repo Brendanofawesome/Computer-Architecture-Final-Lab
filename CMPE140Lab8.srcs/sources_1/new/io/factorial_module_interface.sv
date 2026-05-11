@@ -27,7 +27,7 @@ module factorial_module_interface(
     );
 
     // capture writes synchronously (write enables are byte lanes; any non-zero indicates a write)
-    always_ff @(posedge clk or negedge rst_n) begin
+    always_ff @(posedge clk) begin
         if (!rst_n) begin
             hex_in_reg <= '0;
             go_req <= 1'b0;
@@ -57,8 +57,10 @@ module factorial_module_interface(
             factorial_bus.data_out <= '0;
         end else if (factorial_bus.select) begin
             unique case (factorial_address)
-                2'b00: factorial_bus.data_out <= fact_out; // result
-                2'b01: factorial_bus.data_out <= {30'b0, fact_error, fact_done}; // status
+                2'b01: factorial_bus.data_out <= factorial_bus.data_in[3:0];
+                2'b10: factorial_bus.data_out <= '0;
+                2'b10: factorial_bus.data_out <= fact_out; // result
+                2'b11: factorial_bus.data_out <= {30'b0, fact_error, fact_done}; // status
                 default: factorial_bus.data_out <= '0;
             endcase
         end else begin
