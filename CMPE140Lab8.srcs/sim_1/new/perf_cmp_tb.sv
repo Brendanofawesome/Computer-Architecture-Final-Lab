@@ -1,70 +1,59 @@
 `timescale 1ns/1ps
 
 module perf_cmp_tb;
-
-    localparam int CLK_PERIOD = 10;
-    localparam int MAX_CYCLES = 50000;
-
-    logic        clk = 0;
-    logic        rst_n;
-    logic [31:0] io1_in = 0, io2_in = 0;
+    logic clk = 0, rst_n;
+    logic [31:0] z = 0;
     logic [31:0] io1_out, io2_out, oe1, oe2;
     logic [31:0] pc_o_unused;
-
-    always #(CLK_PERIOD/2) clk = ~clk;
-
-    // instantiate two MIPS cores: one runs SW, one runs HW
-    MIPS #(.IMEM_INIT_FILE("test_fact_sw.hex")) sw_dut (
-        .clk(clk), .rst_n(rst_n),
-        .io1_input(io1_in), .io2_input(io2_in),
-        .io1_output(io1_out), .io2_output(io2_out),
-        .oe1(oe1), .oe2(oe2), .pc_o(pc_o_unused));
+    always #5 clk = ~clk;
 
     MIPS #(.IMEM_INIT_FILE("test_fact_hw.hex")) hw_dut (
         .clk(clk), .rst_n(rst_n),
-        .io1_input(32'b0), .io2_input(32'b0),
+        .io1_input(z), .io2_input(z),
         .io1_output(), .io2_output(),
         .oe1(), .oe2(), .pc_o());
 
-    int sw_done_cyc = -1, hw_done_cyc = -1;
+    MIPS #(.IMEM_INIT_FILE("test_fact_sw.hex")) sw_dut (
+        .clk(clk), .rst_n(rst_n),
+        .io1_input(z), .io2_input(z),
+        .io1_output(), .io2_output(),
+        .oe1(), .oe2(), .pc_o());
 
-    int cycle;
-
+    int unsigned expected [0:12] = '{1,1,2,6,24,120,720,5040,40320,362880,3628800,39916800,479001600};
+    int sw_cyc, hw_cyc, c;
+    
     initial begin
-        rst_n = 0;
-        cycle = 0;
-        repeat (4) @(posedge clk);
-        rst_n = 1;
-        while (cycle < MAX_CYCLES && (sw_done_cyc < 0 || hw_done_cyc < 0)) begin
-            @(posedge clk);
-            #1;
-            cycle++;
-            // end if calculation is done and result is as expected
-            if (sw_done_cyc < 0 && sw_dut.datapath.u_exe.regfile.registers[2] == 32'd120)
-                sw_done_cyc = cycle;
-            if (hw_done_cyc < 0 && hw_dut.datapath.u_exe.regfile.registers[6] == 32'd120)
-                hw_done_cyc = cycle;
-        end
-
         $display("");
-        $display("============================================");
-        $display("  Performance Comparison Results (n=5)");
-        $display("============================================");
-        $display("  Software factorial : %0d cycles (result $v0=%0d)",
-                 sw_done_cyc,
-                 sw_dut.datapath.u_exe.regfile.registers[2]);
-        $display("  Hardware factorial : %0d cycles (result $6 =%0d)",
-                 hw_done_cyc,
-                 hw_dut.datapath.u_exe.regfile.registers[6]);
-        if (sw_done_cyc > 0 && hw_done_cyc > 0)
-            $display("  Speedup            : %.2fx", real'(sw_done_cyc)/real'(hw_done_cyc));
-        $display("============================================");
+        $display("=== Parameterized factorial sweep ===");
+        $display("n,  SW result   SW cyc | HW result   HW cyc | speedup");
+        for (int n = 0; n <= 12; n++) begin
+            sw_cyc = -1;
+            hw_cyc = -1;
+            c = 0;
+            rst_n = 0;
+            repeat (4) @(posedge clk);
+            // set input RAM[0] to n
+            hw_dut.mapped_RAM.memory[0] = n;
+            sw_dut.mapped_RAM.memory[0] = n;
+            // clear RAM[1] so we don't see old result
+            hw_dut.mapped_RAM.memory[1] = 0;
+            sw_dut.mapped_RAM.memory[1] = 0;
+            rst_n = 1;
+            while (c < 5000 && (sw_cyc < 0 || hw_cyc < 0)) begin
+                @(posedge clk); #1;
+                c++;
+                if (sw_cyc < 0 && sw_dut.mapped_RAM.memory[1] == expected[n])
+                    sw_cyc = c;
+                if (hw_cyc < 0 && hw_dut.mapped_RAM.memory[1] == expected[n])
+                    hw_cyc = c;
+            end
+            $display("%2d  %d %4d   | %d %4d   | %.2fx",
+                n,
+                sw_dut.mapped_RAM.memory[1], sw_cyc,
+                hw_dut.mapped_RAM.memory[1], hw_cyc,
+                (sw_cyc>0 && hw_cyc>0) ? real'(sw_cyc)/real'(hw_cyc) : 0.0);
+        end
         $finish;
     end
-
-    initial begin
-        #(MAX_CYCLES * CLK_PERIOD * 2);
-        $display("TIMEOUT");
-        $finish;
-    end
+    initial begin #500000; $display("TIMEOUT"); $finish; end
 endmodule
