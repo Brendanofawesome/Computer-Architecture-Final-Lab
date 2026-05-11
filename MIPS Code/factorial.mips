@@ -1,0 +1,239 @@
+        .text
+        .globl main
+
+        .eqv GPIO1_BASE, 0x00090000    # 7-seg display
+        .eqv GPIO2_BASE, 0x00090010    # switches + LEDs
+
+        .eqv GPIO_DIR,   0
+        .eqv GPIO_OUT,   4
+        .eqv GPIO_IN,    8
+
+main:
+        li   $s6, GPIO1_BASE
+        li   $s7, GPIO2_BASE
+
+        # GPIO1: all outputs (7-seg)
+        li   $t0, 0xFFFFFFFF
+        sw   $t0, GPIO_DIR($s6)
+
+        # GPIO2: upper 16 bits = LED outputs, lower 16 = switch inputs
+        li   $t0, 0xFFFF0000
+        sw   $t0, GPIO_DIR($s7)
+
+        # Clear display
+        li   $t0, 0xFFFFFFFF
+        sw   $t0, GPIO_OUT($s6)
+
+# ----------------------------------------
+# WAIT FOR GO + SHOW SWITCHES ON LEDs
+# ----------------------------------------
+wait_go:
+        lw   $t0, GPIO_IN($s7)
+
+        # Mirror switches to LEDs
+        sll  $t2, $t0, 16
+        sw   $t2, GPIO_OUT($s7)
+
+        # Read input n = SW[3:0] and show in hex
+        andi $s0, $t0, 0x000F
+        jal  display_hex_4digit
+
+        # Check SW[4] as go
+        andi $t1, $t0, 0x0010
+        beq  $t1, $zero, wait_go
+
+        # Get factorial
+        andi $a0, $t0, 0x000F
+        jal  factorial
+        move $s4, $v0
+
+# ----------------------------------------
+# WAIT FOR RELEASE + SHOW RESULT ON DISPLAY
+# ----------------------------------------
+wait_release:
+        lw   $t0, GPIO_IN($s7)
+        andi $t1, $t0, 0x0010
+        beq  $t1, $zero, wait_go
+
+        # Display the requested halfword
+        move $s0, $s4
+        andi $t1, $t0, 0x0020
+        beq  $t1, $zero, display_fact
+        srl  $s0, $s0, 16
+
+display_fact:
+        jal  display_hex_4digit
+
+        j    wait_release
+
+
+# ----------------------------------------
+# factorial(n)
+# ----------------------------------------
+factorial:
+        li   $v0, 1
+        li   $t2, 1
+
+fact_loop:
+        slt  $t3, $a0, $t2
+        bne  $t3, $zero, fact_done
+
+        multu $v0, $t2
+        mflo  $v0
+
+        addi $t2, $t2, 1
+        j    fact_loop
+
+fact_done:
+        jr   $ra
+
+
+# ----------------------------------------
+# DISPLAY (4 hex digits)
+# Shows $s0 as 4 hex nibbles
+# digit 0 = least significant nibble
+# ----------------------------------------
+display_hex_4digit:
+        # save return address
+        add  $s2, $0, $ra
+
+        li   $s1, 0
+
+        # digit 0
+        andi $a0, $s0, 0x000F
+        jal  seg_decode
+        or   $s1, $s1, $v0
+
+        # digit 1
+        srl  $s0, $s0, 4
+        andi $a0, $s0, 0x000F
+        jal  seg_decode
+        sll  $v0, $v0, 8
+        or   $s1, $s1, $v0
+
+        # digit 2
+        srl  $s0, $s0, 4
+        andi $a0, $s0, 0x000F
+        jal  seg_decode
+        sll  $v0, $v0, 16
+        or   $s1, $s1, $v0
+
+        # digit 3
+        srl  $s0, $s0, 4
+        andi $a0, $s0, 0x000F
+        jal  seg_decode
+        sll  $v0, $v0, 24
+        or   $s1, $s1, $v0
+
+        sw   $s1, GPIO_OUT($s6)
+
+        # restore return address
+        add  $ra, $0, $s2
+        jr   $ra
+
+
+# ----------------------------------------
+# 7-seg decoder, active low
+# input:  $a0 = hex digit 0-F
+# output: $v0 = 7-seg pattern
+# ----------------------------------------
+seg_decode:
+        li   $v0, 0xFF
+
+        li   $t7, 0
+        beq  $a0, $t7, seg_0
+        li   $t7, 1
+        beq  $a0, $t7, seg_1
+        li   $t7, 2
+        beq  $a0, $t7, seg_2
+        li   $t7, 3
+        beq  $a0, $t7, seg_3
+        li   $t7, 4
+        beq  $a0, $t7, seg_4
+        li   $t7, 5
+        beq  $a0, $t7, seg_5
+        li   $t7, 6
+        beq  $a0, $t7, seg_6
+        li   $t7, 7
+        beq  $a0, $t7, seg_7
+        li   $t7, 8
+        beq  $a0, $t7, seg_8
+        li   $t7, 9
+        beq  $a0, $t7, seg_9
+        li   $t7, 10
+        beq  $a0, $t7, seg_A
+        li   $t7, 11
+        beq  $a0, $t7, seg_B
+        li   $t7, 12
+        beq  $a0, $t7, seg_C
+        li   $t7, 13
+        beq  $a0, $t7, seg_D
+        li   $t7, 14
+        beq  $a0, $t7, seg_E
+        li   $t7, 15
+        beq  $a0, $t7, seg_F
+        jr   $ra
+
+seg_0:
+        li $v0, 0xC0
+        jr $ra
+
+seg_1:
+        li $v0, 0xF9
+        jr $ra
+
+seg_2:
+        li $v0, 0xA4
+        jr $ra
+
+seg_3:
+        li $v0, 0xB0
+        jr $ra
+
+seg_4:
+        li $v0, 0x99
+        jr $ra
+
+seg_5:
+        li $v0, 0x92
+        jr $ra
+
+seg_6:
+        li $v0, 0x82
+        jr $ra
+
+seg_7:
+        li $v0, 0xF8
+        jr $ra
+
+seg_8:
+        li $v0, 0x80
+        jr $ra
+
+seg_9:
+        li $v0, 0x90
+        jr $ra
+
+seg_A:
+        li $v0, 0x88
+        jr $ra
+
+seg_B:
+        li $v0, 0x83
+        jr $ra
+
+seg_C:
+        li $v0, 0xC6
+        jr $ra
+
+seg_D:
+        li $v0, 0xA1
+        jr $ra
+
+seg_E:
+        li $v0, 0x86
+        jr $ra
+
+seg_F:
+        li $v0, 0x8E
+        jr $ra

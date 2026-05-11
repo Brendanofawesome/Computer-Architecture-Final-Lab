@@ -1,0 +1,24 @@
+        .text
+        .globl main
+
+        .eqv GPIO2_BASE, 0x00090010
+        .eqv GPIO_DIR,   0
+        .eqv GPIO_OUT,   4
+
+main:
+        li   $t0, GPIO2_BASE
+
+        # Enable GPIO2 bit 16 as output
+        li   $t1, 0x00010000
+        sw   $t1, GPIO_DIR($t0)
+
+        # Start LED[0] off
+        li   $t1, 0x00000000
+        sw   $t1, GPIO_OUT($t0)
+
+loop:
+        # Toggle GPIO2 bit 16 -> LED[0]
+        xori $t1, $t1, 0x10000
+        sw   $t1, GPIO_OUT($t0)
+
+        j    loop

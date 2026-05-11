@@ -1,0 +1,26 @@
+        .text
+        .globl main
+
+        .eqv GPIO2_BASE, 0x00090010
+        .eqv GPIO_DIR,   0
+        .eqv GPIO_OUT,   4
+        .eqv GPIO_IN,    8
+
+main:
+        li   $t0, GPIO2_BASE
+
+        # Enable GPIO2[31:16] for LEDs
+        li   $t1, 0xFFFF0000
+        sw   $t1, GPIO_DIR($t0)
+
+loop:
+        # Read switches from GPIO2[15:0]
+        lw   $t2, GPIO_IN($t0)
+
+        # Move switches to LED bits GPIO2[31:16]
+        sll  $t2, $t2, 16
+
+        # Write LEDs
+        sw   $t2, GPIO_OUT($t0)
+
+        j    loop
